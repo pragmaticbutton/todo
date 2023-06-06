@@ -7,10 +7,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// InsertUser inserts new record into user table.
-func (da *DatabaseAccess) InsertUser(tx *sqlx.Tx, u *User) (int, error) {
-	s := sqrl.Insert("user").Columns("username", "fk_role").
-		Values(u.Username, u.FkRole)
+func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int, error) {
+
+	s := sqrl.Insert("category").Columns("name", "description").
+		Values(c.Name, c.Description)
 
 	stmt, params, err := s.ToSql()
 	if err != nil {
@@ -23,6 +23,7 @@ func (da *DatabaseAccess) InsertUser(tx *sqlx.Tx, u *User) (int, error) {
 	} else {
 		res, err = tx.Exec(stmt, params...)
 	}
+
 	if err != nil {
 		return 0, err
 	}

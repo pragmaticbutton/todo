@@ -1,31 +1,34 @@
 package dba
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
-// User struct represents user table.
-type User struct {
-	Id       int
-	Username string
-	FkRole   int
+type TaskPriorityType string
+
+const (
+	TASK_PRIORITY_HIGH   TaskPriorityType = "HIGH"
+	TASK_PRIORITY_MEDIUM TaskPriorityType = "MEDIUM"
+	TASK_PRIORITY_LOW    TaskPriorityType = "LOW"
+)
+
+// Task struct represents task table.
+type Task struct {
+	Id          int
+	Name        string
+	FkCateogory int
+	Priority    TaskPriorityType
+	Done        int8
+	Created     time.Time
+	LastChanged time.Time
 }
 
-// Role struct represents role table.
-type Role struct {
+// Category struct represents category table.
+type Category struct {
 	Id          int
 	Name        string
 	Description sql.NullString
-}
-
-// Permission struct represents permission table.
-type Permission struct {
-	Id          int
-	Name        string
-	Description sql.NullString
-}
-
-// RoleHasPermission struct represents role_has_permission table.
-type RoleHasPermission struct {
-	Id           int
-	FkRole       int
-	FkPermission int
+	Created     time.Time
+	LastChanged time.Time
 }

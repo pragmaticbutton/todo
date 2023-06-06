@@ -25,8 +25,6 @@ func setupTestCase() func() {
 }
 
 func cleanDatabase() {
-	da.db.Exec("DELETE FROM role_has_permission")
-	da.db.Exec("DELETE FROM role")
-	da.db.Exec("DELETE FROM permission")
-	da.db.Exec("DELETE FROM user")
+	da.db.Exec("DELETE FROM category")
+	da.db.Exec("DELETE FROM task")
 }
