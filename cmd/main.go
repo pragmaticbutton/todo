@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"todo/pkg/config"
-	"todo/pkg/dba"
+	stdhttp "net/http"
+	"todo/pkg/todo/config"
+	"todo/pkg/todo/dba"
+	"todo/pkg/todo/service"
+	"todo/pkg/todo/transport/http"
 )
 
 func main() {
@@ -18,7 +20,9 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(da)
+	svc := service.NewToDoService(da)
 
-	http.ListenAndServe("localhost:8090", nil)
+	httpHandler := http.NewHTTPHandler(&svc)
+
+	stdhttp.ListenAndServe("localhost:8090", httpHandler)
 }
