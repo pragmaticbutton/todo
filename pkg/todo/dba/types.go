@@ -15,20 +15,21 @@ const (
 
 // Task struct represents task table.
 type Task struct {
-	Id          int
-	Name        string
-	FkCateogory int
-	Priority    TaskPriorityType
-	Done        int8
-	Created     time.Time
-	LastChanged time.Time
+	Id          int              `db:"id"`
+	Name        string           `db:"name"`
+	FkCateogory int              `db:"fk_category"`
+	Priority    TaskPriorityType `db:"priority"`
+	Done        int8             `db:"done"`
+	Description sql.NullString   `db:"description"`
+	Created     time.Time        `db:"created"`
+	LastChanged time.Time        `db:"last_changed"`
 }
 
 // Category struct represents category table.
 type Category struct {
-	Id          int
-	Name        string
-	Description sql.NullString
-	Created     time.Time
-	LastChanged time.Time
+	Id          int            `db:"id"`
+	Name        string         `db:"name"`
+	Description sql.NullString `db:"description"`
+	Created     time.Time      `db:"created"`
+	LastChanged time.Time      `db:"last_changed"`
 }

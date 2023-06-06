@@ -12,7 +12,7 @@
             "mode": "debug",
             "program": "${workspaceFolder}/cmd/main.go",
             "env": {
-                "TODO_DB_DSN": "root:root@tcp(localhost:13306)/todo"
+                "TODO_DB_DSN": "root:root@tcp(localhost:13306)/todo?parseTime=true"
             }
         }
     ]

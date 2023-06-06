@@ -1,7 +1,7 @@
 package dba
 
 const (
-	dsn = "root:root@tcp(localhost:13306)/todo"
+	dsn = "root:root@tcp(localhost:13306)/todo?parseTime=true"
 )
 
 var (

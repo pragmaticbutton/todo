@@ -35,3 +35,24 @@ func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int, error) 
 
 	return int(id), nil
 }
+
+func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int) (*Category, error) {
+
+	s := sqrl.Select("*").From("category").Where(sqrl.Eq{"id": id})
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var c Category
+	if tx == nil {
+		err = da.db.Get(&c, stmt, params...)
+	} else {
+		tx.Get(&c, stmt, params...)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &c, nil
+}
