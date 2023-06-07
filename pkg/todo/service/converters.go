@@ -13,6 +13,7 @@ func dbaToRestCategoryOut(in *dba.Category) *restapi.CategoryOut {
 
 	out := restapi.CategoryOut{
 		Id:          int32(in.Id),
+		Name:        in.Name,
 		Description: nullStringToStringP(in.Description),
 		Created:     in.Created,
 		LastChanged: in.LastChanged,

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -18,6 +19,14 @@ func NewHTTPHandler(svc todo.ToDoService) http.Handler {
 	return r
 }
 
+func encodeOutput(w http.ResponseWriter, out interface{}) {
+	b, err := json.Marshal(out)
+	if err != nil {
+		panic(err)
+	}
+	w.Write(b)
+}
+
 func getCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -32,6 +41,6 @@ func getCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) 
 			fmt.Fprintf(w, "%v", err)
 		}
 
-		fmt.Fprintf(w, "%v", out)
+		encodeOutput(w, out)
 	}
 }
