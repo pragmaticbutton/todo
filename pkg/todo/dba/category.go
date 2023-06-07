@@ -2,6 +2,8 @@ package dba
 
 import (
 	"database/sql"
+	"fmt"
+	"todo/pkg/todo/errors"
 
 	"github.com/elgris/sqrl"
 	"github.com/jmoiron/sqlx"
@@ -14,7 +16,9 @@ func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int, error) 
 
 	stmt, params, err := s.ToSql()
 	if err != nil {
-		return 0, err
+		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "InsertCategory")
+		return 0, err1
 	}
 
 	var res sql.Result
@@ -25,12 +29,16 @@ func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int, error) 
 	}
 
 	if err != nil {
-		return 0, err
+		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "InsertCategory")
+		return 0, err1
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		return 0, err
+		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "InsertCategory")
+		return 0, err1
 	}
 
 	return int(id), nil
@@ -41,7 +49,9 @@ func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int) (*Category, error
 	s := sqrl.Select("*").From("category").Where(sqrl.Eq{"id": id})
 	stmt, params, err := s.ToSql()
 	if err != nil {
-		return nil, err
+		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "GetCategoryById")
+		return nil, err1
 	}
 
 	var c Category
@@ -51,7 +61,15 @@ func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int) (*Category, error
 		tx.Get(&c, stmt, params...)
 	}
 	if err != nil {
-		return nil, err
+		if err == sql.ErrNoRows {
+			err1 := errors.WithCause(&ErrEntityNotFound, err)
+			err1 = errors.WithContextValue(err1, "entity", "Category")
+			err1 = errors.WithContextValue(err1, "entityId", fmt.Sprintf("%d", id))
+			return nil, err1
+		}
+		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "GetCategoryById")
+		return nil, err1
 	}
 
 	return &c, nil

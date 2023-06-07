@@ -2,10 +2,10 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"todo/pkg/todo"
+	"todo/pkg/todo/errors"
 	"todo/pkg/todo/restapi"
 
 	"github.com/gorilla/mux"
@@ -30,7 +30,8 @@ func createCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 
 		out, err := svc.CreateCategory(r.Context(), &in)
 		if err != nil {
-			fmt.Fprintf(w, "%v", err)
+			encodeError(w, err)
+			return
 		}
 
 		encodeOutput(w, out)
@@ -43,22 +44,40 @@ func getCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) 
 
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			fmt.Fprintf(w, "%v", err)
+			encodeError(w, err)
+			return
 		}
 
 		out, err := svc.GetCategory(r.Context(), id)
 		if err != nil {
-			fmt.Fprintf(w, "%v", err)
+			encodeError(w, err)
+			return
 		}
 
 		encodeOutput(w, out)
 	}
 }
 
+func encodeError(w http.ResponseWriter, e error) {
+	if e == nil {
+		return
+	}
+	enc := json.NewEncoder(w)
+	toDoErr, ok := e.(errors.ToDoError)
+	if !ok {
+		enc.Encode(e)
+		return
+	}
+	enc.Encode(toDoErr)
+}
+
 func encodeOutput(w http.ResponseWriter, out interface{}) {
-	e := json.NewEncoder(w)
-	err := e.Encode(out)
+	if out == nil {
+		return
+	}
+	enc := json.NewEncoder(w)
+	err := enc.Encode(out)
 	if err != nil {
-		fmt.Fprintf(w, "%v", err)
+		encodeError(w, err)
 	}
 }
