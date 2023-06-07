@@ -1,0 +1,75 @@
+openapi: 3.0.1
+
+info:
+  title: API for todo app #TODO
+  version: 0.0.1
+
+components:
+
+  schemas:
+
+    CreateCategoryIn:
+      title: CreateCategory
+      description: Request type for CreateCategory service.
+      properties:
+        name:
+          type: string
+          description: Category name.
+          maxLength: 50
+          example: health
+        description:
+          type: string
+          description: Category description.
+          example: Category for health related tasks.
+      required: [name]
+
+    CategoryOut:
+      title: CategoryOut
+      description: Response type for category related services.
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Id of category.
+          minimum: 1
+          example: 69
+        name:
+          type: string
+          description: Category name.
+          maxLength: 50
+          example: health
+        description:
+          type: string
+          description: Category description.
+          example: Category for health related tasks.
+        created:
+          type: string
+          format: date-time
+          description: Point in time when this category was created.
+          example: "2023-06-05T11:11:11Z"
+        last_changed:
+          type: string
+          format: date-time
+          description: Point in time when this category was last modified.
+          example: "2023-06-06T11:11:11Z"
+      required: [id, name, created, last_changed]
+
+paths:
+  
+  /v1/category/{id}:
+    get:
+      summary: Get category
+      description: Get category by unique identifier.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200": 
+          description: Category successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryOut'

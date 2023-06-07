@@ -1,7 +1,6 @@
 package service
 
 import (
-	"todo/pkg/todo"
 	"todo/pkg/todo/dba"
 )
 
@@ -9,7 +8,7 @@ type toDoService struct {
 	da *dba.DatabaseAccess
 }
 
-func NewToDoService(da *dba.DatabaseAccess) todo.ToDoService {
+func NewToDoService(da *dba.DatabaseAccess) *toDoService {
 	return &toDoService{
 		da: da,
 	}

@@ -22,7 +22,7 @@ func main() {
 
 	svc := service.NewToDoService(da)
 
-	httpHandler := http.NewHTTPHandler(&svc)
+	httpHandler := http.NewHTTPHandler(svc)
 
 	stdhttp.ListenAndServe("localhost:8090", httpHandler)
 }

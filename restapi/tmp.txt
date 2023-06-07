@@ -1,0 +1,1 @@
+./oapi-codegen -package restapi -generate=types ../../Projects/todo/restapi/todo.yml > ../../Projects/todo/pkg/todo/restapi/todo.gen.go
