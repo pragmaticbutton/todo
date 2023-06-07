@@ -73,3 +73,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CategoryOut'
+
+  /v1/category:
+    post:
+      summary: Create category
+      description: Create new category.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryIn'
+      responses:
+        "200": 
+          description: Category successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryOut'

@@ -6,6 +6,19 @@ import (
 	"todo/pkg/todo/restapi"
 )
 
+func restToDbaCreateCategoryIn(in *restapi.CreateCategoryIn) *dba.Category {
+	if in == nil {
+		return nil
+	}
+
+	out := dba.Category{
+		Name:        in.Name,
+		Description: stringPToNullString(in.Description),
+	}
+
+	return &out
+}
+
 func dbaToRestCategoryOut(in *dba.Category) *restapi.CategoryOut {
 	if in == nil {
 		return nil
@@ -28,4 +41,12 @@ func nullStringToStringP(in sql.NullString) *string {
 	}
 
 	return &in.String
+}
+
+func stringPToNullString(in *string) sql.NullString {
+	if in == nil {
+		return sql.NullString{Valid: false}
+	}
+
+	return sql.NullString{String: *in, Valid: true}
 }

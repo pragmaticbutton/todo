@@ -24,3 +24,15 @@ type CategoryOut struct {
 	// Name Category name.
 	Name string `json:"name"`
 }
+
+// CreateCategoryIn Request type for CreateCategory service.
+type CreateCategoryIn struct {
+	// Description Category description.
+	Description *string `json:"description,omitempty"`
+
+	// Name Category name.
+	Name string `json:"name"`
+}
+
+// PostV1CategoryJSONRequestBody defines body for PostV1Category for application/json ContentType.
+type PostV1CategoryJSONRequestBody = CreateCategoryIn
