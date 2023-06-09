@@ -58,7 +58,7 @@ func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int) (*Category, error
 	if tx == nil {
 		err = da.db.Get(&c, stmt, params...)
 	} else {
-		tx.Get(&c, stmt, params...)
+		err = tx.Get(&c, stmt, params...)
 	}
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -73,4 +73,33 @@ func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int) (*Category, error
 	}
 
 	return &c, nil
+}
+
+func (da *DatabaseAccess) SearchCategory(tx *sqlx.Tx, name *string) ([]Category, error) {
+
+	s := sqrl.Select("*").From("category")
+	if name != nil {
+		s = s.Where("name LIKE ?", name)
+	}
+
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "SearchCategory")
+		return nil, err1
+	}
+
+	var cs []Category
+	if tx == nil {
+		err = da.db.Select(&cs, stmt, params...)
+	} else {
+		err = tx.Select(&cs, stmt, params...)
+	}
+	if err != nil {
+		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "SearchCategory")
+		return nil, err1
+	}
+
+	return cs, nil
 }

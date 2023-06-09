@@ -54,16 +54,27 @@ components:
           example: "2023-06-06T11:11:11Z"
       required: [id, name, created, last_changed]
 
+    SearchCategoryOut:
+      title: SearchCategoryOut
+      description: Response type for SearchCategory service.
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryOut'
+
 paths:
   
   /v1/category/{id}:
     get:
       summary: Get category
+      operationId: getCategory
       description: Get category by unique identifier.
       parameters:
       - name: id
         in: path
         required: true
+        description: Category unique identifier.
         schema:
           type: string
       responses:
@@ -77,6 +88,7 @@ paths:
   /v1/category:
     post:
       summary: Create category
+      operationId: createCategory
       description: Create new category.
       requestBody:
         content:
@@ -90,3 +102,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CategoryOut'
+    
+    get:
+      summary: Search category
+      operationId: searchCategory
+      description: Search categories by various provided parameters.
+      parameters:
+      - name: name
+        in: query
+        required: false
+        description: Category name. Supports wildcards (*).
+        schema:
+          type: string
+      responses:
+        "200": 
+          description: Category successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchCategoryOut'

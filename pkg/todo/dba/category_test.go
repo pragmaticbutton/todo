@@ -60,3 +60,23 @@ func TestGetCategoryById(t *testing.T) {
 	assert.Equal(t, c.Name, cat.Name)
 	assert.Equal(t, c.Description, cat.Description)
 }
+
+func TestSearchCategory(t *testing.T) {
+	teardownTestCase := setupTestCase()
+	defer teardownTestCase()
+
+	// prepare categories
+	c1 := Category{Name: "meditation1", Description: sql.NullString{Valid: true, String: "Category for meditation tasks."}}
+	da.InsertCategory(nil, &c1)
+
+	c2 := Category{Name: "meditation2", Description: sql.NullString{Valid: true, String: "Category for meditation tasks."}}
+	da.InsertCategory(nil, &c2)
+
+	n := "medita%"
+	cs, err := da.SearchCategory(nil, &n)
+
+	assert.Nil(t, err)
+	assert.NotNil(t, cs)
+	assert.NotEmpty(t, cs)
+	assert.Len(t, cs, 2)
+}

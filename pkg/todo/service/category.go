@@ -45,3 +45,24 @@ func (svc *toDoService) GetCategory(ctx context.Context, id int) (*restapi.Categ
 
 	return out, nil
 }
+
+func (svc *toDoService) SearchCategory(ctx context.Context, params *restapi.SearchCategoryParams) (*restapi.SearchCategoryOut, error) {
+
+	name := params.Name
+	if name != nil {
+		n := replaceWildCards(*name)
+		name = &n
+	}
+	cs, err := svc.da.SearchCategory(nil, name)
+	if err != nil {
+		return nil, err
+	}
+
+	csOut := make([]restapi.CategoryOut, len(cs))
+	for i, c := range cs {
+		csOut[i] = *dbaToRestCategoryOut(&c)
+	}
+	out := &restapi.SearchCategoryOut{Categories: &csOut}
+
+	return out, nil
+}

@@ -17,6 +17,7 @@ func NewHTTPHandler(svc todo.ToDoService) http.Handler {
 
 	r.HandleFunc("/v1/category", createCategory(svc)).Methods("POST")
 	r.HandleFunc("/v1/category/{id}", getCategory(svc)).Methods("GET")
+	r.HandleFunc("/v1/category", searchCategory(svc)).Methods("GET")
 
 	return r
 }
@@ -49,6 +50,25 @@ func getCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) 
 		}
 
 		out, err := svc.GetCategory(r.Context(), id)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		encodeOutput(w, out)
+	}
+}
+
+func searchCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := restapi.SearchCategoryParams{}
+
+		name := r.FormValue("name")
+		if name != "" {
+			params.Name = &name
+		}
+
+		out, err := svc.SearchCategory(r.Context(), &params)
 		if err != nil {
 			encodeError(w, err)
 			return

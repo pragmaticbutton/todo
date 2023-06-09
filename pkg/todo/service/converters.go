@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"strings"
 	"todo/pkg/todo/dba"
 	"todo/pkg/todo/restapi"
 )
@@ -49,4 +50,8 @@ func stringPToNullString(in *string) sql.NullString {
 	}
 
 	return sql.NullString{String: *in, Valid: true}
+}
+
+func replaceWildCards(s string) string {
+	return strings.ReplaceAll(s, "*", "%")
 }

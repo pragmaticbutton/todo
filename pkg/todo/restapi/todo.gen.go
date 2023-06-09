@@ -34,5 +34,16 @@ type CreateCategoryIn struct {
 	Name string `json:"name"`
 }
 
-// PostV1CategoryJSONRequestBody defines body for PostV1Category for application/json ContentType.
-type PostV1CategoryJSONRequestBody = CreateCategoryIn
+// SearchCategoryOut Response type for SearchCategory service.
+type SearchCategoryOut struct {
+	Categories *[]CategoryOut `json:"categories,omitempty"`
+}
+
+// SearchCategoryParams defines parameters for SearchCategory.
+type SearchCategoryParams struct {
+	// Name Category name. Supports wildcards (*).
+	Name *string `form:"name,omitempty" json:"name,omitempty"`
+}
+
+// CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.
+type CreateCategoryJSONRequestBody = CreateCategoryIn
