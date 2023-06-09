@@ -3,6 +3,7 @@ package dba
 import (
 	"database/sql"
 	"testing"
+	"todo/pkg/todo/errors"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
@@ -79,4 +80,26 @@ func TestSearchCategory(t *testing.T) {
 	assert.NotNil(t, cs)
 	assert.NotEmpty(t, cs)
 	assert.Len(t, cs, 2)
+}
+
+func TestDeleteCategory(t *testing.T) {
+	teardownTestCase := setupTestCase()
+	defer teardownTestCase()
+
+	// prepare category
+	c := Category{Name: "health", Description: sql.NullString{Valid: true, String: "Category for health tasks."}}
+	id, _ := da.InsertCategory(nil, &c)
+
+	err := da.DeleteCategoryById(nil, id)
+
+	assert.Nil(t, err)
+
+	c1, err := da.GetCategoryById(nil, id)
+	assert.NotNil(t, err)
+	assert.Nil(t, c1)
+
+	toDoErr, ok := err.(errors.ToDoError)
+	assert.True(t, ok)
+	assert.NotNil(t, toDoErr)
+	assert.Equal(t, ErrEntityNotFound.ErrorCode, toDoErr.ErrorCode)
 }

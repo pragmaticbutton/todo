@@ -18,10 +18,7 @@ type ToDoError struct {
 	Cause         error
 }
 
-func WithContextValue(e *ToDoError, key string, value interface{}) *ToDoError {
-	if e == nil {
-		return nil
-	}
+func WithContextValue(e ToDoError, key string, value interface{}) ToDoError {
 
 	if len(e.ContextValues) == 0 {
 		e.ContextValues = map[string]interface{}{}
@@ -31,10 +28,7 @@ func WithContextValue(e *ToDoError, key string, value interface{}) *ToDoError {
 	return e
 }
 
-func WithCause(e *ToDoError, cause error) *ToDoError {
-	if e == nil {
-		return nil
-	}
+func WithCause(e ToDoError, cause error) ToDoError {
 
 	e.Cause = cause
 	return e

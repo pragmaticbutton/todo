@@ -16,7 +16,7 @@ func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int, error) 
 
 	stmt, params, err := s.ToSql()
 	if err != nil {
-		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 := errors.WithCause(ErrDatabaseError, err)
 		err1 = errors.WithContextValue(err1, "operation", "InsertCategory")
 		return 0, err1
 	}
@@ -29,14 +29,14 @@ func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int, error) 
 	}
 
 	if err != nil {
-		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 := errors.WithCause(ErrDatabaseError, err)
 		err1 = errors.WithContextValue(err1, "operation", "InsertCategory")
 		return 0, err1
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 := errors.WithCause(ErrDatabaseError, err)
 		err1 = errors.WithContextValue(err1, "operation", "InsertCategory")
 		return 0, err1
 	}
@@ -49,7 +49,7 @@ func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int) (*Category, error
 	s := sqrl.Select("*").From("category").Where(sqrl.Eq{"id": id})
 	stmt, params, err := s.ToSql()
 	if err != nil {
-		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 := errors.WithCause(ErrDatabaseError, err)
 		err1 = errors.WithContextValue(err1, "operation", "GetCategoryById")
 		return nil, err1
 	}
@@ -62,12 +62,12 @@ func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int) (*Category, error
 	}
 	if err != nil {
 		if err == sql.ErrNoRows {
-			err1 := errors.WithCause(&ErrEntityNotFound, err)
+			err1 := errors.WithCause(ErrEntityNotFound, err)
 			err1 = errors.WithContextValue(err1, "entity", "Category")
 			err1 = errors.WithContextValue(err1, "entityId", fmt.Sprintf("%d", id))
 			return nil, err1
 		}
-		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 := errors.WithCause(ErrDatabaseError, err)
 		err1 = errors.WithContextValue(err1, "operation", "GetCategoryById")
 		return nil, err1
 	}
@@ -84,7 +84,7 @@ func (da *DatabaseAccess) SearchCategory(tx *sqlx.Tx, name *string) ([]Category,
 
 	stmt, params, err := s.ToSql()
 	if err != nil {
-		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 := errors.WithCause(ErrDatabaseError, err)
 		err1 = errors.WithContextValue(err1, "operation", "SearchCategory")
 		return nil, err1
 	}
@@ -96,10 +96,35 @@ func (da *DatabaseAccess) SearchCategory(tx *sqlx.Tx, name *string) ([]Category,
 		err = tx.Select(&cs, stmt, params...)
 	}
 	if err != nil {
-		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 := errors.WithCause(ErrDatabaseError, err)
 		err1 = errors.WithContextValue(err1, "operation", "SearchCategory")
 		return nil, err1
 	}
 
 	return cs, nil
+}
+
+func (da *DatabaseAccess) DeleteCategoryById(tx *sqlx.Tx, id int) error {
+
+	s := sqrl.Delete().From("category").Where(sqrl.Eq{"id": id})
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "DeleteCategory")
+		return err1
+	}
+
+	if tx == nil {
+		_, err = da.db.Exec(stmt, params...)
+	} else {
+		_, err = tx.Exec(stmt, params...)
+	}
+
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "InsertCategory")
+		return err1
+	}
+
+	return nil
 }

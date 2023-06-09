@@ -66,17 +66,17 @@ components:
 paths:
   
   /v1/category/{id}:
-    get:
-      summary: Get category
-      operationId: getCategory
-      description: Get category by unique identifier.
-      parameters:
+    parameters:
       - name: id
         in: path
         required: true
         description: Category unique identifier.
         schema:
           type: string
+    get:
+      summary: Get category
+      operationId: getCategory
+      description: Get category by unique identifier.
       responses:
         "200": 
           description: Category successfully retrieved.
@@ -84,6 +84,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CategoryOut'
+    
+    delete:
+      summary: Delete category
+      operationId: deleteCategory
+      description: Delete category by unique identifier.
+      responses:
+        "200": 
+          description: Category successfully deleted.
+
 
   /v1/category:
     post:

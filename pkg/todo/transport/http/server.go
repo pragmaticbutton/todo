@@ -18,6 +18,7 @@ func NewHTTPHandler(svc todo.ToDoService) http.Handler {
 	r.HandleFunc("/v1/category", createCategory(svc)).Methods("POST")
 	r.HandleFunc("/v1/category/{id}", getCategory(svc)).Methods("GET")
 	r.HandleFunc("/v1/category", searchCategory(svc)).Methods("GET")
+	r.HandleFunc("/v1/category/{id}", deleteCategory(svc)).Methods("DELETE")
 
 	return r
 }
@@ -75,6 +76,24 @@ func searchCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 		}
 
 		encodeOutput(w, out)
+	}
+}
+
+func deleteCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		err = svc.DeleteCategory(r.Context(), id)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
 	}
 }
 

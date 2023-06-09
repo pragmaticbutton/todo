@@ -38,13 +38,13 @@ func openDB(dsn string) (*sqlx.DB, error) {
 func (da *DatabaseAccess) ExecuteInTransaction(f func(tx *sqlx.Tx) error) error {
 	tx, err := da.db.Beginx()
 	if err != nil {
-		return errors.WithCause(&ErrDatabaseError, err)
+		return errors.WithCause(ErrDatabaseError, err)
 	}
 
 	err = f(tx)
 	if err != nil {
 		if err := tx.Rollback(); err != nil {
-			err1 := errors.WithCause(&ErrDatabaseError, err)
+			err1 := errors.WithCause(ErrDatabaseError, err)
 			err1 = errors.WithContextValue(err1, "reason", "rollback failed")
 			return err1
 		}
@@ -52,7 +52,7 @@ func (da *DatabaseAccess) ExecuteInTransaction(f func(tx *sqlx.Tx) error) error 
 	}
 
 	if err := tx.Commit(); err != nil {
-		err1 := errors.WithCause(&ErrDatabaseError, err)
+		err1 := errors.WithCause(ErrDatabaseError, err)
 		err1 = errors.WithContextValue(err1, "reason", "commit failed")
 		return err1
 	}

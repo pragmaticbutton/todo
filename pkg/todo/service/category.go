@@ -66,3 +66,26 @@ func (svc *toDoService) SearchCategory(ctx context.Context, params *restapi.Sear
 
 	return out, nil
 }
+
+func (svc *toDoService) DeleteCategory(ctx context.Context, id int) error {
+
+	err := svc.da.ExecuteInTransaction(func(tx *sqlx.Tx) error {
+
+		_, err := svc.da.GetCategoryById(tx, id)
+		if err != nil {
+			return err
+		}
+
+		err = svc.da.DeleteCategoryById(tx, id)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
