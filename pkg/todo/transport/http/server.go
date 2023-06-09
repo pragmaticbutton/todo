@@ -19,6 +19,7 @@ func NewHTTPHandler(svc todo.ToDoService) http.Handler {
 	r.HandleFunc("/v1/category/{id}", getCategory(svc)).Methods("GET")
 	r.HandleFunc("/v1/category", searchCategory(svc)).Methods("GET")
 	r.HandleFunc("/v1/category/{id}", deleteCategory(svc)).Methods("DELETE")
+	r.HandleFunc("/v1/category/{id}", updateCategory(svc)).Methods("PATCH")
 
 	return r
 }
@@ -94,6 +95,30 @@ func deleteCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 			encodeError(w, err)
 			return
 		}
+	}
+}
+
+func updateCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		var in restapi.UpdateCategoryIn
+		d := json.NewDecoder(r.Body)
+		d.Decode(&in)
+
+		out, err := svc.UpdateCategory(r.Context(), id, &in)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		encodeOutput(w, out)
 	}
 }
 

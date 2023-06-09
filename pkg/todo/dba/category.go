@@ -110,7 +110,7 @@ func (da *DatabaseAccess) DeleteCategoryById(tx *sqlx.Tx, id int) error {
 	stmt, params, err := s.ToSql()
 	if err != nil {
 		err1 := errors.WithCause(ErrDatabaseError, err)
-		err1 = errors.WithContextValue(err1, "operation", "DeleteCategory")
+		err1 = errors.WithContextValue(err1, "operation", "DeleteCategoryById")
 		return err1
 	}
 
@@ -122,7 +122,32 @@ func (da *DatabaseAccess) DeleteCategoryById(tx *sqlx.Tx, id int) error {
 
 	if err != nil {
 		err1 := errors.WithCause(ErrDatabaseError, err)
-		err1 = errors.WithContextValue(err1, "operation", "InsertCategory")
+		err1 = errors.WithContextValue(err1, "operation", "DeleteCategoryById")
+		return err1
+	}
+
+	return nil
+}
+
+func (da *DatabaseAccess) UpdateCategory(tx *sqlx.Tx, c *Category) error {
+
+	s := sqrl.Update("category").Set("name", c.Name).Set("description", c.Description).Where(sqrl.Eq{"id": c.Id})
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "UpdateCategory")
+		return err1
+	}
+
+	if tx == nil {
+		_, err = da.db.Exec(stmt, params...)
+	} else {
+		_, err = tx.Exec(stmt, params...)
+	}
+
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "UpdateCategory")
 		return err1
 	}
 

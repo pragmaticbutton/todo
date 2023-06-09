@@ -63,6 +63,20 @@ components:
           items:
             $ref: '#/components/schemas/CategoryOut'
 
+    UpdateCategoryIn:
+      title: UpdateCategoryIn
+      description: Request type for UpdateCategory service.
+      properties:
+        name:
+          type: string
+          description: Category name.
+          maxLength: 50
+          example: health
+        description:
+          type: string
+          description: Category description.
+          example: Category for health related tasks.
+
 paths:
   
   /v1/category/{id}:
@@ -93,6 +107,22 @@ paths:
         "200": 
           description: Category successfully deleted.
 
+    patch:
+      summary: Update category
+      operationId: updateCategory
+      description: Update category.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCategoryIn'
+      responses:
+        "200": 
+          description: Category successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryOut'
 
   /v1/category:
     post:

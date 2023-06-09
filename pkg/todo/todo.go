@@ -10,4 +10,5 @@ type ToDoService interface {
 	GetCategory(ctx context.Context, id int) (*restapi.CategoryOut, error)
 	SearchCategory(ctx context.Context, params *restapi.SearchCategoryParams) (*restapi.SearchCategoryOut, error)
 	DeleteCategory(ctx context.Context, id int) error
+	UpdateCategory(ctx context.Context, id int, in *restapi.UpdateCategoryIn) (*restapi.CategoryOut, error)
 }

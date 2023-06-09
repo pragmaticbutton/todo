@@ -103,3 +103,25 @@ func TestDeleteCategory(t *testing.T) {
 	assert.NotNil(t, toDoErr)
 	assert.Equal(t, ErrEntityNotFound.ErrorCode, toDoErr.ErrorCode)
 }
+
+func TestUpdateCategory(t *testing.T) {
+	teardownTestCase := setupTestCase()
+	defer teardownTestCase()
+
+	// prepare category
+	c := Category{Name: "health", Description: sql.NullString{Valid: true, String: "Category for health tasks."}}
+	id, _ := da.InsertCategory(nil, &c)
+	c.Id = id
+
+	c.Name = "new name"
+	c.Description.String = "new description"
+
+	err := da.UpdateCategory(nil, &c)
+	assert.Nil(t, err)
+
+	c1, err := da.GetCategoryById(nil, id)
+	assert.Nil(t, err)
+	assert.NotNil(t, c1)
+	assert.Equal(t, c.Name, c1.Name)
+	assert.Equal(t, c.Description, c1.Description)
+}

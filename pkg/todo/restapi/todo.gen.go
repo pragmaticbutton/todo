@@ -39,6 +39,15 @@ type SearchCategoryOut struct {
 	Categories *[]CategoryOut `json:"categories,omitempty"`
 }
 
+// UpdateCategoryIn Request type for UpdateCategory service.
+type UpdateCategoryIn struct {
+	// Description Category description.
+	Description *string `json:"description,omitempty"`
+
+	// Name Category name.
+	Name *string `json:"name,omitempty"`
+}
+
 // SearchCategoryParams defines parameters for SearchCategory.
 type SearchCategoryParams struct {
 	// Name Category name. Supports wildcards (*).
@@ -47,3 +56,6 @@ type SearchCategoryParams struct {
 
 // CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.
 type CreateCategoryJSONRequestBody = CreateCategoryIn
+
+// UpdateCategoryJSONRequestBody defines body for UpdateCategory for application/json ContentType.
+type UpdateCategoryJSONRequestBody = UpdateCategoryIn

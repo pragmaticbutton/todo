@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"database/sql"
+	"todo/pkg/todo/dba"
 	"todo/pkg/todo/restapi"
 
 	"github.com/jmoiron/sqlx"
@@ -88,4 +90,42 @@ func (svc *toDoService) DeleteCategory(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+func (svc *toDoService) UpdateCategory(ctx context.Context, id int, in *restapi.UpdateCategoryIn) (*restapi.CategoryOut, error) {
+
+	var c *dba.Category
+	err := svc.da.ExecuteInTransaction(func(tx *sqlx.Tx) error {
+
+		var err error
+		c, err = svc.da.GetCategoryById(tx, id)
+		if err != nil {
+			return err
+		}
+
+		updateCategoryWithValuesFromRequest(c, in)
+		err = svc.da.UpdateCategory(tx, c)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	out := dbaToRestCategoryOut(c)
+
+	return out, nil
+}
+
+func updateCategoryWithValuesFromRequest(c *dba.Category, in *restapi.UpdateCategoryIn) {
+	if in.Name != nil {
+		c.Name = *in.Name
+	}
+
+	if in.Description != nil {
+		c.Description = sql.NullString{String: *in.Description, Valid: true}
+	}
 }
