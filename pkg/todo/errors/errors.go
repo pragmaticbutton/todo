@@ -43,3 +43,7 @@ func WithCause(e *ToDoError, cause error) *ToDoError {
 func (e ToDoError) Error() string {
 	return "error"
 }
+
+func (e ToDoError) Unwrap() error {
+	return e.Cause
+}

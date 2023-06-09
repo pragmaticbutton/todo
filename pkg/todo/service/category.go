@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"todo/pkg/todo/restapi"
 
 	"github.com/jmoiron/sqlx"
@@ -18,7 +17,11 @@ func (svc *toDoService) CreateCategory(ctx context.Context, in *restapi.CreateCa
 		if err != nil {
 			return err
 		}
-		c.Id = id
+
+		c, err = svc.da.GetCategoryById(tx, id)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	})
@@ -33,10 +36,6 @@ func (svc *toDoService) CreateCategory(ctx context.Context, in *restapi.CreateCa
 
 func (svc *toDoService) GetCategory(ctx context.Context, id int) (*restapi.CategoryOut, error) {
 
-	if err := validateGetCategoryRequest(id); err != nil {
-		return nil, err
-	}
-
 	c, err := svc.da.GetCategoryById(nil, id)
 	if err != nil {
 		return nil, err
@@ -45,13 +44,4 @@ func (svc *toDoService) GetCategory(ctx context.Context, id int) (*restapi.Categ
 	out := dbaToRestCategoryOut(c)
 
 	return out, nil
-}
-
-func validateGetCategoryRequest(id int) error {
-
-	if id < 0 {
-		return fmt.Errorf("id must be a positive number")
-	}
-
-	return nil
 }
