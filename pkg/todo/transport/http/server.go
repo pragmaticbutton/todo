@@ -11,9 +11,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func NewHTTPHandler(svc todo.ToDoService) http.Handler {
+func NewHTTPHandler(svc todo.ToDoService, mws ...mux.MiddlewareFunc) http.Handler {
 
 	r := mux.NewRouter()
+
+	for _, mw := range mws {
+		r.Use(mw)
+	}
 
 	r.HandleFunc("/v1/category", createCategory(svc)).Methods("POST")
 	r.HandleFunc("/v1/category/{id}", getCategory(svc)).Methods("GET")
@@ -122,6 +126,17 @@ func updateCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 	}
 }
 
+func encodeOutput(w http.ResponseWriter, out interface{}) {
+	if out == nil {
+		return
+	}
+	enc := json.NewEncoder(w)
+	err := enc.Encode(out)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func encodeError(w http.ResponseWriter, e error) {
 	if e == nil {
 		return
@@ -133,15 +148,4 @@ func encodeError(w http.ResponseWriter, e error) {
 		return
 	}
 	enc.Encode(toDoErr)
-}
-
-func encodeOutput(w http.ResponseWriter, out interface{}) {
-	if out == nil {
-		return
-	}
-	enc := json.NewEncoder(w)
-	err := enc.Encode(out)
-	if err != nil {
-		encodeError(w, err)
-	}
 }

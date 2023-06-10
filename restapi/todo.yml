@@ -70,10 +70,12 @@ components:
         name:
           type: string
           description: Category name.
+          minLength: 1
           maxLength: 50
           example: health
         description:
           type: string
+          maxLength: 255
           description: Category description.
           example: Category for health related tasks.
 
