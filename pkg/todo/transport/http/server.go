@@ -19,11 +19,15 @@ func NewHTTPHandler(svc todo.ToDoService, mws ...mux.MiddlewareFunc) http.Handle
 		r.Use(mw)
 	}
 
+	// category
 	r.HandleFunc("/v1/category", createCategory(svc)).Methods("POST")
 	r.HandleFunc("/v1/category/{id}", getCategory(svc)).Methods("GET")
 	r.HandleFunc("/v1/category", searchCategory(svc)).Methods("GET")
 	r.HandleFunc("/v1/category/{id}", deleteCategory(svc)).Methods("DELETE")
 	r.HandleFunc("/v1/category/{id}", updateCategory(svc)).Methods("PATCH")
+
+	// task
+	r.HandleFunc("/v1/task", createTask(svc)).Methods("POST")
 
 	return r
 }
@@ -117,6 +121,23 @@ func updateCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 		d.Decode(&in)
 
 		out, err := svc.UpdateCategory(r.Context(), id, &in)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		encodeOutput(w, out)
+	}
+}
+
+func createTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var in restapi.CreateTaskIn
+		d := json.NewDecoder(r.Body)
+		d.Decode(&in)
+
+		out, err := svc.CreateTask(r.Context(), &in)
 		if err != nil {
 			encodeError(w, err)
 			return

@@ -8,6 +8,11 @@ components:
 
   schemas:
 
+    
+    ###########################
+    # Category schemas
+    ###########################
+
     CreateCategoryIn:
       title: CreateCategory
       description: Request type for CreateCategory service.
@@ -78,6 +83,84 @@ components:
           maxLength: 255
           description: Category description.
           example: Category for health related tasks.
+
+    ###########################
+    # Task schemas
+    ###########################
+
+    TaskPriority:
+      title: TaskPriority
+      type: string
+      enum: [HIGH, MEDIUM, LOW]
+      description: Priority of the task.
+      example: LOW
+
+    CreateTaskIn:
+      title: CreateTaskIn
+      description: Request type for CreateTask service.
+      type: object
+      properties:
+        name: 
+          type: string
+          maxLength: 50
+          description: Task name.
+          example: Wash the dishes
+        categoryId:
+          type: integer
+          format: int32
+          description: Id of the category this tasks belongs.
+          example: 23
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        description:
+          type: string
+          maxLength: 255
+          description: Description of the task.
+          example: The dishes must be washed.
+      required: [name, categoryId, priority]
+
+    TaskOut:
+      title: TaskOut
+      description: Resopnse type for task services.
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Unique identifier of a task.
+        name: 
+          type: string
+          maxLength: 50
+          description: Task name.
+          example: Wash the dishes
+        category_id:
+          type: integer
+          format: int32
+          description: Id of the category this tasks belongs.
+          example: 23
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        done:
+          type: boolean
+          description: Flag indicating whether the task is finished.
+          example: false
+        description:
+          type: string
+          maxLength: 255
+          description: Description of the task.
+          example: The dishes must be washed.
+        created:
+          type: string
+          format: date-time
+          description: Point in time when this task was created.
+          example: "2023-06-05T11:11:11Z"
+        last_changed:
+          type: string
+          format: date-time
+          description: Point in time when this task was last modified.
+          example: "2023-06-06T11:11:11Z"
+      required: [id, name, category_id, priority, done, created, last_changed]   
+    
 
 paths:
   
@@ -162,3 +245,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchCategoryOut'
+
+  /v1/task:
+    post:
+      summary: Create task
+      operationId: createTask
+      description: Create new task.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskIn'
+      responses:
+        "200": 
+          description: Category successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskOut'
+

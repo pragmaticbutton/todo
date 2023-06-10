@@ -17,7 +17,7 @@ const (
 type Task struct {
 	Id          int              `db:"id"`
 	Name        string           `db:"name"`
-	FkCateogory int              `db:"fk_category"`
+	FkCategory  int              `db:"fk_category"`
 	Priority    TaskPriorityType `db:"priority"`
 	Done        int8             `db:"done"`
 	Description sql.NullString   `db:"description"`

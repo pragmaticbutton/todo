@@ -7,6 +7,13 @@ import (
 	"time"
 )
 
+// Defines values for TaskPriority.
+const (
+	HIGH   TaskPriority = "HIGH"
+	LOW    TaskPriority = "LOW"
+	MEDIUM TaskPriority = "MEDIUM"
+)
+
 // CategoryOut Response type for category related services.
 type CategoryOut struct {
 	// Created Point in time when this category was created.
@@ -34,10 +41,55 @@ type CreateCategoryIn struct {
 	Name string `json:"name"`
 }
 
+// CreateTaskIn Request type for CreateTask service.
+type CreateTaskIn struct {
+	// CategoryId Id of the category this tasks belongs.
+	CategoryId int32 `json:"categoryId"`
+
+	// Description Description of the task.
+	Description *string `json:"description,omitempty"`
+
+	// Name Task name.
+	Name string `json:"name"`
+
+	// Priority Priority of the task.
+	Priority TaskPriority `json:"priority"`
+}
+
 // SearchCategoryOut Response type for SearchCategory service.
 type SearchCategoryOut struct {
 	Categories *[]CategoryOut `json:"categories,omitempty"`
 }
+
+// TaskOut Resopnse type for task services.
+type TaskOut struct {
+	// CategoryId Id of the category this tasks belongs.
+	CategoryId int32 `json:"category_id"`
+
+	// Created Point in time when this task was created.
+	Created time.Time `json:"created"`
+
+	// Description Description of the task.
+	Description *string `json:"description,omitempty"`
+
+	// Done Flag indicating whether the task is finished.
+	Done bool `json:"done"`
+
+	// Id Unique identifier of a task.
+	Id int32 `json:"id"`
+
+	// LastChanged Point in time when this task was last modified.
+	LastChanged time.Time `json:"last_changed"`
+
+	// Name Task name.
+	Name string `json:"name"`
+
+	// Priority Priority of the task.
+	Priority TaskPriority `json:"priority"`
+}
+
+// TaskPriority Priority of the task.
+type TaskPriority string
 
 // UpdateCategoryIn Request type for UpdateCategory service.
 type UpdateCategoryIn struct {
@@ -59,3 +111,6 @@ type CreateCategoryJSONRequestBody = CreateCategoryIn
 
 // UpdateCategoryJSONRequestBody defines body for UpdateCategory for application/json ContentType.
 type UpdateCategoryJSONRequestBody = UpdateCategoryIn
+
+// CreateTaskJSONRequestBody defines body for CreateTask for application/json ContentType.
+type CreateTaskJSONRequestBody = CreateTaskIn
