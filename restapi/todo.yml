@@ -264,3 +264,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskOut'
 
+  /v1/task/{id}:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Category unique identifier.
+        schema:
+          type: integer
+          format: int32
+      summary: Get task
+      description: Get task by unique identifier.
+      operationId: getTask
+      responses:
+        "200": 
+          description: Category successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskOut'

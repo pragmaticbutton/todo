@@ -28,6 +28,7 @@ func NewHTTPHandler(svc todo.ToDoService, mws ...mux.MiddlewareFunc) http.Handle
 
 	// task
 	r.HandleFunc("/v1/task", createTask(svc)).Methods("POST")
+	r.HandleFunc("/v1/task/{id}", getTask(svc)).Methods("GET")
 
 	return r
 }
@@ -138,6 +139,26 @@ func createTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 		d.Decode(&in)
 
 		out, err := svc.CreateTask(r.Context(), &in)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		encodeOutput(w, out)
+	}
+}
+
+func getTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		out, err := svc.GetTask(r.Context(), id)
 		if err != nil {
 			encodeError(w, err)
 			return

@@ -33,3 +33,15 @@ func (svc *toDoService) CreateTask(ctx context.Context, in *restapi.CreateTaskIn
 
 	return out, nil
 }
+
+func (svc *toDoService) GetTask(ctx context.Context, id int) (*restapi.TaskOut, error) {
+
+	t, err := svc.da.GetTaskById(nil, id)
+	if err != nil {
+		return nil, err
+	}
+
+	out := dbaToRestTaskOut(t)
+
+	return out, nil
+}
