@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int, error) {
+func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int32, error) {
 
 	s := sqrl.Insert("category").Columns("name", "description").
 		Values(c.Name, c.Description)
@@ -41,10 +41,10 @@ func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int, error) 
 		return 0, err1
 	}
 
-	return int(id), nil
+	return int32(id), nil
 }
 
-func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int) (*Category, error) {
+func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int32) (*Category, error) {
 
 	s := sqrl.Select("*").From("category").Where(sqrl.Eq{"id": id})
 	stmt, params, err := s.ToSql()
@@ -79,7 +79,7 @@ func (da *DatabaseAccess) SearchCategory(tx *sqlx.Tx, name *string) ([]Category,
 
 	s := sqrl.Select("*").From("category")
 	if name != nil {
-		s = s.Where("name LIKE ?", name)
+		s = s.Where("name LIKE ?", *name)
 	}
 
 	stmt, params, err := s.ToSql()
@@ -104,7 +104,7 @@ func (da *DatabaseAccess) SearchCategory(tx *sqlx.Tx, name *string) ([]Category,
 	return cs, nil
 }
 
-func (da *DatabaseAccess) DeleteCategoryById(tx *sqlx.Tx, id int) error {
+func (da *DatabaseAccess) DeleteCategoryById(tx *sqlx.Tx, id int32) error {
 
 	s := sqrl.Delete().From("category").Where(sqrl.Eq{"id": id})
 	stmt, params, err := s.ToSql()

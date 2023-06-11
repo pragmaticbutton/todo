@@ -36,7 +36,7 @@ func (svc *toDoService) CreateCategory(ctx context.Context, in *restapi.CreateCa
 	return out, nil
 }
 
-func (svc *toDoService) GetCategory(ctx context.Context, id int) (*restapi.CategoryOut, error) {
+func (svc *toDoService) GetCategory(ctx context.Context, id int32) (*restapi.CategoryOut, error) {
 
 	c, err := svc.da.GetCategoryById(nil, id)
 	if err != nil {
@@ -50,11 +50,12 @@ func (svc *toDoService) GetCategory(ctx context.Context, id int) (*restapi.Categ
 
 func (svc *toDoService) SearchCategory(ctx context.Context, params *restapi.SearchCategoryParams) (*restapi.SearchCategoryOut, error) {
 
-	name := params.Name
-	if name != nil {
-		n := replaceWildCards(*name)
+	var name *string
+	if params.Name != nil {
+		n := replaceWildCards(*params.Name)
 		name = &n
 	}
+
 	cs, err := svc.da.SearchCategory(nil, name)
 	if err != nil {
 		return nil, err
@@ -69,7 +70,7 @@ func (svc *toDoService) SearchCategory(ctx context.Context, params *restapi.Sear
 	return out, nil
 }
 
-func (svc *toDoService) DeleteCategory(ctx context.Context, id int) error {
+func (svc *toDoService) DeleteCategory(ctx context.Context, id int32) error {
 
 	err := svc.da.ExecuteInTransaction(func(tx *sqlx.Tx) error {
 
@@ -92,7 +93,7 @@ func (svc *toDoService) DeleteCategory(ctx context.Context, id int) error {
 	return nil
 }
 
-func (svc *toDoService) UpdateCategory(ctx context.Context, id int, in *restapi.UpdateCategoryIn) (*restapi.CategoryOut, error) {
+func (svc *toDoService) UpdateCategory(ctx context.Context, id int32, in *restapi.UpdateCategoryIn) (*restapi.CategoryOut, error) {
 
 	var c *dba.Category
 	err := svc.da.ExecuteInTransaction(func(tx *sqlx.Tx) error {

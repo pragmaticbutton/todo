@@ -15,9 +15,9 @@ const (
 
 // Task struct represents task table.
 type Task struct {
-	Id          int              `db:"id"`
+	Id          int32            `db:"id"`
 	Name        string           `db:"name"`
-	FkCategory  int              `db:"fk_category"`
+	FkCategory  int32            `db:"fk_category"`
 	Priority    TaskPriorityType `db:"priority"`
 	Done        int8             `db:"done"`
 	Description sql.NullString   `db:"description"`
@@ -27,7 +27,7 @@ type Task struct {
 
 // Category struct represents category table.
 type Category struct {
-	Id          int            `db:"id"`
+	Id          int32          `db:"id"`
 	Name        string         `db:"name"`
 	Description sql.NullString `db:"description"`
 	Created     time.Time      `db:"created"`

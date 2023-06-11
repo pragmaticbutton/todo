@@ -61,6 +61,11 @@ type SearchCategoryOut struct {
 	Categories *[]CategoryOut `json:"categories,omitempty"`
 }
 
+// SearchTaskOut Response type for SearchTask service.
+type SearchTaskOut struct {
+	Tasks *[]TaskOut `json:"tasks,omitempty"`
+}
+
 // TaskOut Resopnse type for task services.
 type TaskOut struct {
 	// CategoryId Id of the category this tasks belongs.
@@ -104,6 +109,21 @@ type UpdateCategoryIn struct {
 type SearchCategoryParams struct {
 	// Name Category name. Supports wildcards (*).
 	Name *string `form:"name,omitempty" json:"name,omitempty"`
+}
+
+// SearchTaskParams defines parameters for SearchTask.
+type SearchTaskParams struct {
+	// Name Task name. Supports wildcards (*).
+	Name *string `form:"name,omitempty" json:"name,omitempty"`
+
+	// CategoryId Category id.
+	CategoryId *int32 `form:"categoryId,omitempty" json:"categoryId,omitempty"`
+
+	// Done Indicator of if the task has been completed.
+	Done *bool `form:"done,omitempty" json:"done,omitempty"`
+
+	// Priority Priority of the task.
+	Priority *TaskPriority `form:"priority,omitempty" json:"priority,omitempty"`
 }
 
 // CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.

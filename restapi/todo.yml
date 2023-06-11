@@ -161,6 +161,14 @@ components:
           example: "2023-06-06T11:11:11Z"
       required: [id, name, category_id, priority, done, created, last_changed]   
     
+    SearchTaskOut:
+      title: SearchTaskOut
+      description: Response type for SearchTask service.
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskOut'
 
 paths:
   
@@ -263,6 +271,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskOut'
+    get:
+      summary: Search task
+      operationId: searchTask
+      description: Search tasks by various provided parameters.
+      parameters:
+      - name: name
+        in: query
+        required: false
+        description: Task name. Supports wildcards (*).
+        schema:
+          type: string
+      - name: categoryId
+        in: query
+        required: false
+        description: Category id.
+        schema:
+          type: integer
+          format: int32
+      - name: done
+        in: query
+        description: Indicator of if the task has been completed.
+        schema:
+          type: boolean
+      - name: priority
+        in: query
+        required: false
+        description: Priority of the task.
+        schema:
+          $ref: '#/components/schemas/TaskPriority'
+      responses:
+        "200": 
+          description: Tasks successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTaskOut'
 
   /v1/task/{id}:
     parameters:

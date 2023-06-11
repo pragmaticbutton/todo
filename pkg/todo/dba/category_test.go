@@ -24,7 +24,7 @@ func TestInsertCategory_Transaction(t *testing.T) {
 	teardownTestCase := setupTestCase()
 	defer teardownTestCase()
 
-	var idToCheck int
+	var idToCheck int32
 	err := da.ExecuteInTransaction(func(tx *sqlx.Tx) error {
 		c := Category{Name: "health", Description: sql.NullString{Valid: true, String: "Category for health tasks."}}
 		id, err := da.InsertCategory(tx, &c)

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"todo/pkg/todo/dba"
 	"todo/pkg/todo/restapi"
 
 	"github.com/jmoiron/sqlx"
@@ -34,7 +35,7 @@ func (svc *toDoService) CreateTask(ctx context.Context, in *restapi.CreateTaskIn
 	return out, nil
 }
 
-func (svc *toDoService) GetTask(ctx context.Context, id int) (*restapi.TaskOut, error) {
+func (svc *toDoService) GetTask(ctx context.Context, id int32) (*restapi.TaskOut, error) {
 
 	t, err := svc.da.GetTaskById(nil, id)
 	if err != nil {
@@ -46,7 +47,7 @@ func (svc *toDoService) GetTask(ctx context.Context, id int) (*restapi.TaskOut, 
 	return out, nil
 }
 
-func (svc *toDoService) DeleteTask(ctx context.Context, id int) error {
+func (svc *toDoService) DeleteTask(ctx context.Context, id int32) error {
 
 	err := svc.da.ExecuteInTransaction(func(tx *sqlx.Tx) error {
 
@@ -67,4 +68,44 @@ func (svc *toDoService) DeleteTask(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+func (svc *toDoService) SearchTask(ctx context.Context, params *restapi.SearchTaskParams) (*restapi.SearchTaskOut, error) {
+
+	var name *string
+	if params.Name != nil {
+		n := replaceWildCards(*params.Name)
+		name = &n
+	}
+
+	var done *int8
+	if params.Done != nil {
+		d := int8(0)
+		if *params.Done {
+			d = int8(1)
+		}
+		done = &d
+
+	}
+	ts, err := svc.da.SearchTask(nil, name, params.CategoryId, taskPriorityForSearch(params.Priority), done)
+	if err != nil {
+		return nil, err
+	}
+
+	tsOut := make([]restapi.TaskOut, len(ts))
+	for i, t := range ts {
+		tsOut[i] = *dbaToRestTaskOut(&t)
+	}
+	out := restapi.SearchTaskOut{Tasks: &tsOut}
+
+	return &out, nil
+}
+
+func taskPriorityForSearch(in *restapi.TaskPriority) *dba.TaskPriorityType {
+	if in == nil {
+		return nil
+	}
+
+	out := restToDbaTaskPriority(*in)
+	return &out
 }

@@ -50,7 +50,7 @@ func TestGetTaskById(t *testing.T) {
 	tId, _ := da.InsertTask(nil, &task)
 
 	// TODO: check why is this necessary...
-	time.Sleep(time.Nanosecond * 5)
+	time.Sleep(time.Nanosecond * 10)
 
 	task1, err := da.GetTaskById(nil, tId)
 
@@ -97,4 +97,42 @@ func TestDeleteTaskById(t *testing.T) {
 	assert.NotNil(t, toDoErr)
 	assert.Equal(t, ErrEntityNotFound.ErrorCode, toDoErr.ErrorCode)
 
+}
+
+func TestSearchTask(t *testing.T) {
+	teardownTestCase := setupTestCase()
+	defer teardownTestCase()
+
+	// prepare category
+	c := Category{Name: "school", Description: sql.NullString{String: "School related tasks", Valid: true}}
+	cId, _ := da.InsertCategory(nil, &c)
+
+	// prepare tasks
+	task1 := Task{
+		Name:        "geography homework",
+		FkCategory:  cId,
+		Priority:    TASK_PRIORITY_MEDIUM,
+		Done:        0,
+		Description: sql.NullString{String: "Finish geography homework", Valid: true},
+	}
+	da.InsertTask(nil, &task1)
+
+	// prepare tasks
+	task2 := Task{
+		Name:        "history homework",
+		FkCategory:  cId,
+		Priority:    TASK_PRIORITY_LOW,
+		Done:        0,
+		Description: sql.NullString{String: "Finish history homework", Valid: true},
+	}
+	da.InsertTask(nil, &task2)
+
+	time.Sleep(time.Nanosecond * 5)
+
+	n := "%homework"
+	p := TASK_PRIORITY_MEDIUM
+	ts, err := da.SearchTask(nil, &n, nil, &p, nil)
+
+	assert.Nil(t, err)
+	assert.Len(t, ts, 1)
 }

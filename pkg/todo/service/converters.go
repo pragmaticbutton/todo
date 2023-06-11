@@ -63,7 +63,7 @@ func restToDbaCreateTaskIn(in *restapi.CreateTaskIn) *dba.Task {
 
 	out := dba.Task{
 		Name:        in.Name,
-		FkCategory:  int(in.CategoryId),
+		FkCategory:  in.CategoryId,
 		Priority:    restToDbaTaskPriority(in.Priority),
 		Description: stringPToNullString(in.Description),
 	}

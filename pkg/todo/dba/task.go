@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func (da *DatabaseAccess) InsertTask(tx *sqlx.Tx, t *Task) (int, error) {
+func (da *DatabaseAccess) InsertTask(tx *sqlx.Tx, t *Task) (int32, error) {
 	s := sqrl.Insert("task").Columns("name", "fk_category", "priority", "description").
 		Values(t.Name, t.FkCategory, t.Priority, t.Description)
 
@@ -40,10 +40,10 @@ func (da *DatabaseAccess) InsertTask(tx *sqlx.Tx, t *Task) (int, error) {
 		return 0, err1
 	}
 
-	return int(id), nil
+	return int32(id), nil
 }
 
-func (da *DatabaseAccess) GetTaskById(tx *sqlx.Tx, id int) (*Task, error) {
+func (da *DatabaseAccess) GetTaskById(tx *sqlx.Tx, id int32) (*Task, error) {
 
 	s := sqrl.Select("*").From("task").Where(sqrl.Eq{"id": id})
 	stmt, params, err := s.ToSql()
@@ -74,7 +74,7 @@ func (da *DatabaseAccess) GetTaskById(tx *sqlx.Tx, id int) (*Task, error) {
 	return &c, nil
 }
 
-func (da *DatabaseAccess) DeleteTaskById(tx *sqlx.Tx, id int) error {
+func (da *DatabaseAccess) DeleteTaskById(tx *sqlx.Tx, id int32) error {
 
 	s := sqrl.Delete().From("task").Where(sqrl.Eq{"id": id})
 	stmt, params, err := s.ToSql()
@@ -97,4 +97,45 @@ func (da *DatabaseAccess) DeleteTaskById(tx *sqlx.Tx, id int) error {
 	}
 
 	return nil
+}
+
+func (da *DatabaseAccess) SearchTask(tx *sqlx.Tx, name *string, fkCategory *int32, priority *TaskPriorityType, done *int8) ([]Task, error) {
+
+	s := sqrl.Select("*").From("task")
+	if name != nil {
+		s = s.Where("name LIKE ?", *name)
+	}
+
+	if fkCategory != nil {
+		s = s.Where(sqrl.Eq{"fk_category": *fkCategory})
+	}
+
+	if priority != nil {
+		s = s.Where(sqrl.Eq{"priority": *priority})
+	}
+
+	if done != nil {
+		s = s.Where(sqrl.Eq{"done": *done})
+	}
+
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "SearchTask")
+		return nil, err1
+	}
+
+	var ts []Task
+	if tx == nil {
+		err = da.db.Select(&ts, stmt, params...)
+	} else {
+		err = tx.Select(&ts, stmt, params...)
+	}
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "SearchTask")
+		return nil, err1
+	}
+
+	return ts, nil
 }

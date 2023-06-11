@@ -30,6 +30,7 @@ func NewHTTPHandler(svc todo.ToDoService, mws ...mux.MiddlewareFunc) http.Handle
 	r.HandleFunc("/v1/task", createTask(svc)).Methods("POST")
 	r.HandleFunc("/v1/task/{id}", getTask(svc)).Methods("GET")
 	r.HandleFunc("/v1/task/{id}", deleteTask(svc)).Methods("DELETE")
+	r.HandleFunc("/v1/task", searchTask(svc)).Methods("GET")
 
 	return r
 }
@@ -61,7 +62,7 @@ func getCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) 
 			return
 		}
 
-		out, err := svc.GetCategory(r.Context(), id)
+		out, err := svc.GetCategory(r.Context(), int32(id))
 		if err != nil {
 			encodeError(w, err)
 			return
@@ -100,7 +101,7 @@ func deleteCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 			return
 		}
 
-		err = svc.DeleteCategory(r.Context(), id)
+		err = svc.DeleteCategory(r.Context(), int32(id))
 		if err != nil {
 			encodeError(w, err)
 			return
@@ -122,7 +123,7 @@ func updateCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 		d := json.NewDecoder(r.Body)
 		d.Decode(&in)
 
-		out, err := svc.UpdateCategory(r.Context(), id, &in)
+		out, err := svc.UpdateCategory(r.Context(), int32(id), &in)
 		if err != nil {
 			encodeError(w, err)
 			return
@@ -159,7 +160,7 @@ func getTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		out, err := svc.GetTask(r.Context(), id)
+		out, err := svc.GetTask(r.Context(), int32(id))
 		if err != nil {
 			encodeError(w, err)
 			return
@@ -179,11 +180,53 @@ func deleteTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		err = svc.DeleteTask(r.Context(), id)
+		err = svc.DeleteTask(r.Context(), int32(id))
 		if err != nil {
 			encodeError(w, err)
 			return
 		}
+	}
+}
+
+func searchTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := restapi.SearchTaskParams{}
+
+		name := r.FormValue("name")
+		if name != "" {
+			params.Name = &name
+		}
+
+		categoryId := r.FormValue("categoryId")
+		if categoryId != "" {
+			cId, err := strconv.Atoi(categoryId)
+			if err != nil {
+				encodeError(w, err)
+				return
+			}
+			c := int32(cId)
+			params.CategoryId = &c
+		}
+
+		priority := r.FormValue("priority")
+		if priority != "" {
+			p := restapi.TaskPriority(priority)
+			params.Priority = &p
+		}
+
+		done := r.FormValue("done")
+		if done != "" && (done == "false" || done == "true") {
+			d := done == "true"
+			params.Done = &d
+		}
+
+		out, err := svc.SearchTask(r.Context(), &params)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		encodeOutput(w, out)
 	}
 }
 
