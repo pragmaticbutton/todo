@@ -73,3 +73,28 @@ func (da *DatabaseAccess) GetTaskById(tx *sqlx.Tx, id int) (*Task, error) {
 
 	return &c, nil
 }
+
+func (da *DatabaseAccess) DeleteTaskById(tx *sqlx.Tx, id int) error {
+
+	s := sqrl.Delete().From("task").Where(sqrl.Eq{"id": id})
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "DeleteTaskById")
+		return err1
+	}
+
+	if tx == nil {
+		_, err = da.db.Exec(stmt, params...)
+	} else {
+		_, err = tx.Exec(stmt, params...)
+	}
+
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "DeleteTaskById")
+		return err1
+	}
+
+	return nil
+}

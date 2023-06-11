@@ -29,6 +29,7 @@ func NewHTTPHandler(svc todo.ToDoService, mws ...mux.MiddlewareFunc) http.Handle
 	// task
 	r.HandleFunc("/v1/task", createTask(svc)).Methods("POST")
 	r.HandleFunc("/v1/task/{id}", getTask(svc)).Methods("GET")
+	r.HandleFunc("/v1/task/{id}", deleteTask(svc)).Methods("DELETE")
 
 	return r
 }
@@ -168,10 +169,29 @@ func getTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+func deleteTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		err = svc.DeleteTask(r.Context(), id)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+	}
+}
+
 func encodeOutput(w http.ResponseWriter, out interface{}) {
 	if out == nil {
 		return
 	}
+	w.WriteHeader(http.StatusOK)
 	enc := json.NewEncoder(w)
 	err := enc.Encode(out)
 	if err != nil {
@@ -189,5 +209,6 @@ func encodeError(w http.ResponseWriter, e error) {
 		enc.Encode(e)
 		return
 	}
+	w.WriteHeader(toDoErr.HttpStatus)
 	enc.Encode(toDoErr)
 }

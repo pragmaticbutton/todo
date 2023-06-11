@@ -258,15 +258,14 @@ paths:
               $ref: '#/components/schemas/CreateTaskIn'
       responses:
         "200": 
-          description: Category successfully retrieved.
+          description: Task successfully retrieved.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskOut'
 
   /v1/task/{id}:
-    get:
-      parameters:
+    parameters:
       - name: id
         in: path
         required: true
@@ -274,6 +273,7 @@ paths:
         schema:
           type: integer
           format: int32
+    get:
       summary: Get task
       description: Get task by unique identifier.
       operationId: getTask
@@ -284,3 +284,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskOut'
+    delete:
+      summary: Delete task
+      description: Delete task by unique identifier.
+      operationId: deleteTask
+      responses:
+        "200": 
+          description: Task successfully deleted.

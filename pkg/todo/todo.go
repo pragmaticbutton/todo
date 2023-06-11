@@ -17,4 +17,5 @@ type ToDoService interface {
 	// task services
 	CreateTask(ctx context.Context, in *restapi.CreateTaskIn) (*restapi.TaskOut, error)
 	GetTask(ctx context.Context, id int) (*restapi.TaskOut, error)
+	DeleteTask(ctx context.Context, id int) error
 }

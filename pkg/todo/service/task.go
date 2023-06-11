@@ -45,3 +45,26 @@ func (svc *toDoService) GetTask(ctx context.Context, id int) (*restapi.TaskOut, 
 
 	return out, nil
 }
+
+func (svc *toDoService) DeleteTask(ctx context.Context, id int) error {
+
+	err := svc.da.ExecuteInTransaction(func(tx *sqlx.Tx) error {
+
+		_, err := svc.da.GetTaskById(tx, id)
+		if err != nil {
+			return err
+		}
+
+		err = svc.da.DeleteTaskById(tx, id)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
