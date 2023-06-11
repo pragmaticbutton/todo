@@ -338,4 +338,25 @@ paths:
       operationId: deleteTask
       responses:
         "200": 
-          description: Task successfully deleted.
+          description: Task successfully deleted.\
+
+  /v1/task/{id}/finish:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Category unique identifier.
+        schema:
+          type: integer
+          format: int32
+    patch:
+      summary: Finish task
+      operationId: finishTask
+      description: Finish task.
+      responses:
+        "200": 
+          description: Category successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskOut'

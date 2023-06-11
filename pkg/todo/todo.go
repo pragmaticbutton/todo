@@ -19,4 +19,5 @@ type ToDoService interface {
 	GetTask(ctx context.Context, id int32) (*restapi.TaskOut, error)
 	DeleteTask(ctx context.Context, id int32) error
 	SearchTask(ctx context.Context, params *restapi.SearchTaskParams) (*restapi.SearchTaskOut, error)
+	FinishTask(ctx context.Context, id int32) (*restapi.TaskOut, error)
 }

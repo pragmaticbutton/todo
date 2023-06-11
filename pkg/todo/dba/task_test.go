@@ -136,3 +136,33 @@ func TestSearchTask(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, ts, 1)
 }
+
+func TestUpdateTask(t *testing.T) {
+	teardownTestCase := setupTestCase()
+	defer teardownTestCase()
+
+	// prepare category
+	c := Category{Name: "school", Description: sql.NullString{String: "School related tasks", Valid: true}}
+	cId, _ := da.InsertCategory(nil, &c)
+
+	// prepare task
+	task := Task{
+		Name:        "geography homework",
+		FkCategory:  cId,
+		Priority:    TASK_PRIORITY_MEDIUM,
+		Done:        0,
+		Description: sql.NullString{String: "Finish geography homework", Valid: true},
+	}
+	tId, _ := da.InsertTask(nil, &task)
+
+	// TODO: check why is this necessary...
+	time.Sleep(time.Nanosecond * 5)
+
+	tIns, _ := da.GetTaskById(nil, tId)
+
+	tIns.Done = 1
+	tIns.Name = "other name"
+	err := da.UpdateTask(nil, tIns)
+	assert.Nil(t, err)
+
+}

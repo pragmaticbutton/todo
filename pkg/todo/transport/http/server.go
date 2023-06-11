@@ -31,6 +31,7 @@ func NewHTTPHandler(svc todo.ToDoService, mws ...mux.MiddlewareFunc) http.Handle
 	r.HandleFunc("/v1/task/{id}", getTask(svc)).Methods("GET")
 	r.HandleFunc("/v1/task/{id}", deleteTask(svc)).Methods("DELETE")
 	r.HandleFunc("/v1/task", searchTask(svc)).Methods("GET")
+	r.HandleFunc("/v1/task/{id}/finish", finishTask(svc)).Methods("PATCH")
 
 	return r
 }
@@ -221,6 +222,26 @@ func searchTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 		}
 
 		out, err := svc.SearchTask(r.Context(), &params)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		encodeOutput(w, out)
+	}
+}
+
+func finishTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		out, err := svc.FinishTask(r.Context(), int32(id))
 		if err != nil {
 			encodeError(w, err)
 			return

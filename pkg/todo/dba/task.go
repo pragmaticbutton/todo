@@ -139,3 +139,30 @@ func (da *DatabaseAccess) SearchTask(tx *sqlx.Tx, name *string, fkCategory *int3
 
 	return ts, nil
 }
+
+func (da *DatabaseAccess) UpdateTask(tx *sqlx.Tx, t *Task) error {
+
+	s := sqrl.Update("task").Set("name", t.Name).Set("description", t.Description).
+		Set("priority", t.Priority).Set("done", t.Done).Set("fk_category", t.FkCategory).
+		Where(sqrl.Eq{"id": t.Id})
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "UpdateTask")
+		return err1
+	}
+
+	if tx == nil {
+		_, err = da.db.Exec(stmt, params...)
+	} else {
+		_, err = tx.Exec(stmt, params...)
+	}
+
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "UpdateTask")
+		return err1
+	}
+
+	return nil
+}
