@@ -16,6 +16,7 @@ components:
     CreateCategoryIn:
       title: CreateCategory
       description: Request type for CreateCategory service.
+      type: object
       properties:
         name:
           type: string
@@ -31,6 +32,7 @@ components:
     CategoryOut:
       title: CategoryOut
       description: Response type for category related services.
+      type: object
       properties:
         id:
           type: integer
@@ -62,6 +64,7 @@ components:
     SearchCategoryOut:
       title: SearchCategoryOut
       description: Response type for SearchCategory service.
+      type: object
       properties:
         categories:
           type: array
@@ -164,6 +167,7 @@ components:
     SearchTaskOut:
       title: SearchTaskOut
       description: Response type for SearchTask service.
+      type: object
       properties:
         tasks:
           type: array
