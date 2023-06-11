@@ -215,7 +215,7 @@ paths:
               $ref: '#/components/schemas/UpdateCategoryIn'
       responses:
         "200": 
-          description: Category successfully retrieved.
+          description: Category successfully updated.
           content:
             application/json:
               schema:
@@ -233,7 +233,7 @@ paths:
               $ref: '#/components/schemas/CreateCategoryIn'
       responses:
         "200": 
-          description: Category successfully retrieved.
+          description: Category successfully created.
           content:
             application/json:
               schema:
@@ -252,7 +252,7 @@ paths:
           type: string
       responses:
         "200": 
-          description: Category successfully retrieved.
+          description: Categories successfully retrieved.
           content:
             application/json:
               schema:
@@ -270,7 +270,7 @@ paths:
               $ref: '#/components/schemas/CreateTaskIn'
       responses:
         "200": 
-          description: Task successfully retrieved.
+          description: Task successfully created.
           content:
             application/json:
               schema:
@@ -327,7 +327,7 @@ paths:
       operationId: getTask
       responses:
         "200": 
-          description: Category successfully retrieved.
+          description: Task successfully retrieved.
           content:
             application/json:
               schema:
@@ -338,7 +338,7 @@ paths:
       operationId: deleteTask
       responses:
         "200": 
-          description: Task successfully deleted.\
+          description: Task successfully deleted.
 
   /v1/task/{id}/finish:
     parameters:
@@ -355,7 +355,7 @@ paths:
       description: Finish task.
       responses:
         "200": 
-          description: Category successfully retrieved.
+          description: Task successfully finished.
           content:
             application/json:
               schema:
