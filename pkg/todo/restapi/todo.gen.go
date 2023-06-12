@@ -43,7 +43,7 @@ type CreateCategoryIn struct {
 
 // CreateTaskIn Request type for CreateTask service.
 type CreateTaskIn struct {
-	// CategoryId Id of the category this tasks belongs.
+	// CategoryId Id of the category this tasks belongs to.
 	CategoryId int32 `json:"categoryId"`
 
 	// Description Description of the task.
@@ -105,6 +105,24 @@ type UpdateCategoryIn struct {
 	Name *string `json:"name,omitempty"`
 }
 
+// UpdateTaskIn Request type for UpdateTask service.
+type UpdateTaskIn struct {
+	// CategoryId Id of the category this tasks belongs to.
+	CategoryId *int32 `json:"categoryId,omitempty"`
+
+	// Description Task description.
+	Description *string `json:"description,omitempty"`
+
+	// Done Flag indicating whether the task is finished.
+	Done *bool `json:"done,omitempty"`
+
+	// Name Task name.
+	Name *string `json:"name,omitempty"`
+
+	// Priority Priority of the task.
+	Priority *TaskPriority `json:"priority,omitempty"`
+}
+
 // SearchCategoryParams defines parameters for SearchCategory.
 type SearchCategoryParams struct {
 	// Name Category name. Supports wildcards (*).
@@ -134,3 +152,6 @@ type UpdateCategoryJSONRequestBody = UpdateCategoryIn
 
 // CreateTaskJSONRequestBody defines body for CreateTask for application/json ContentType.
 type CreateTaskJSONRequestBody = CreateTaskIn
+
+// UpdateTaskJSONRequestBody defines body for UpdateTask for application/json ContentType.
+type UpdateTaskJSONRequestBody = UpdateTaskIn

@@ -128,6 +128,34 @@ func (svc *toDoService) FinishTask(ctx context.Context, id int32) (*restapi.Task
 	return out, nil
 }
 
+func (svc *toDoService) UpdateTask(ctx context.Context, id int32, in *restapi.UpdateTaskIn) (*restapi.TaskOut, error) {
+
+	var t *dba.Task
+	err := svc.da.ExecuteInTransaction(func(tx *sqlx.Tx) error {
+
+		var err error
+		t, err = svc.da.GetTaskById(tx, id)
+		if err != nil {
+			return err
+		}
+
+		updateTaskWithValuesFromRequest(t, in)
+		err = svc.da.UpdateTask(tx, t)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	out := dbaToRestTaskOut(t)
+
+	return out, nil
+}
+
 func taskPriorityForSearch(in *restapi.TaskPriority) *dba.TaskPriorityType {
 	if in == nil {
 		return nil
@@ -135,4 +163,30 @@ func taskPriorityForSearch(in *restapi.TaskPriority) *dba.TaskPriorityType {
 
 	out := restToDbaTaskPriority(*in)
 	return &out
+}
+
+func updateTaskWithValuesFromRequest(t *dba.Task, in *restapi.UpdateTaskIn) {
+	if in.Name != nil {
+		t.Name = *in.Name
+	}
+
+	if in.CategoryId != nil {
+		t.FkCategory = *in.CategoryId
+	}
+
+	if in.Description != nil {
+		t.Description = stringPToNullString(in.Description)
+	}
+
+	if in.Done != nil {
+		if *in.Done {
+			t.Done = int8(1)
+		} else {
+			t.Done = int8(0)
+		}
+	}
+
+	if in.Priority != nil {
+		t.Priority = restToDbaTaskPriority(*in.Priority)
+	}
 }

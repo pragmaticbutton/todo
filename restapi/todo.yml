@@ -111,7 +111,7 @@ components:
         categoryId:
           type: integer
           format: int32
-          description: Id of the category this tasks belongs.
+          description: Id of the category this tasks belongs to.
           example: 23
         priority:
           $ref: '#/components/schemas/TaskPriority'
@@ -173,6 +173,34 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TaskOut'
+
+    UpdateTaskIn:
+      title: UpdateTaskIn
+      description: Request type for UpdateTask service.
+      type: object
+      properties:
+        name: 
+          type: string
+          description: Task name.
+          minLength: 1
+          maxLength: 50
+          example: run
+        categoryId:
+          type: integer
+          format: int32
+          description: Id of the category this tasks belongs to.
+          example: 23
+        priority:
+          $ref: '#/components/schemas/TaskPriority'
+        done:
+          type: boolean
+          description: Flag indicating whether the task is finished.
+          example: false
+        description:
+          type: string
+          maxLength: 255
+          description: Task description.
+          example: Run 3 km.
 
 paths:
   
@@ -339,6 +367,22 @@ paths:
       responses:
         "200": 
           description: Task successfully deleted.
+    patch:
+      summary: Update task
+      operationId: updateTask
+      description: Update task.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskIn'
+      responses:
+        "200": 
+          description: Task successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskOut'
 
   /v1/task/{id}/finish:
     parameters:
