@@ -5,13 +5,12 @@ import (
 	"net/http"
 	"strconv"
 	"todo/pkg/todo"
-	"todo/pkg/todo/errors"
 	"todo/pkg/todo/restapi"
 
 	"github.com/gorilla/mux"
 )
 
-func NewHTTPHandler(svc todo.ToDoService, mws ...mux.MiddlewareFunc) http.Handler {
+func NewHTTPHandler(svc todo.ToDoService, encodeError ErrorEncoderFunc, mws ...mux.MiddlewareFunc) http.Handler {
 
 	r := mux.NewRouter()
 
@@ -20,24 +19,24 @@ func NewHTTPHandler(svc todo.ToDoService, mws ...mux.MiddlewareFunc) http.Handle
 	}
 
 	// category
-	r.HandleFunc("/v1/category", createCategory(svc)).Methods("POST")
-	r.HandleFunc("/v1/category/{id}", getCategory(svc)).Methods("GET")
-	r.HandleFunc("/v1/category", searchCategory(svc)).Methods("GET")
-	r.HandleFunc("/v1/category/{id}", deleteCategory(svc)).Methods("DELETE")
-	r.HandleFunc("/v1/category/{id}", updateCategory(svc)).Methods("PATCH")
+	r.HandleFunc("/v1/category", createCategory(svc, encodeError)).Methods("POST")
+	r.HandleFunc("/v1/category/{id}", getCategory(svc, encodeError)).Methods("GET")
+	r.HandleFunc("/v1/category", searchCategory(svc, encodeError)).Methods("GET")
+	r.HandleFunc("/v1/category/{id}", deleteCategory(svc, encodeError)).Methods("DELETE")
+	r.HandleFunc("/v1/category/{id}", updateCategory(svc, encodeError)).Methods("PATCH")
 
 	// task
-	r.HandleFunc("/v1/task", createTask(svc)).Methods("POST")
-	r.HandleFunc("/v1/task/{id}", getTask(svc)).Methods("GET")
-	r.HandleFunc("/v1/task/{id}", deleteTask(svc)).Methods("DELETE")
-	r.HandleFunc("/v1/task/{id}", updateTask(svc)).Methods("PATCH")
-	r.HandleFunc("/v1/task", searchTask(svc)).Methods("GET")
-	r.HandleFunc("/v1/task/{id}/finish", finishTask(svc)).Methods("PATCH")
+	r.HandleFunc("/v1/task", createTask(svc, encodeError)).Methods("POST")
+	r.HandleFunc("/v1/task/{id}", getTask(svc, encodeError)).Methods("GET")
+	r.HandleFunc("/v1/task/{id}", deleteTask(svc, encodeError)).Methods("DELETE")
+	r.HandleFunc("/v1/task/{id}", updateTask(svc, encodeError)).Methods("PATCH")
+	r.HandleFunc("/v1/task", searchTask(svc, encodeError)).Methods("GET")
+	r.HandleFunc("/v1/task/{id}/finish", finishTask(svc, encodeError)).Methods("PATCH")
 
 	return r
 }
 
-func createCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func createCategory(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		var in restapi.CreateCategoryIn
@@ -54,7 +53,7 @@ func createCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 	}
 }
 
-func getCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func getCategory(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
@@ -74,7 +73,7 @@ func getCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) 
 	}
 }
 
-func searchCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func searchCategory(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := restapi.SearchCategoryParams{}
 
@@ -93,7 +92,7 @@ func searchCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 	}
 }
 
-func deleteCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func deleteCategory(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
@@ -111,7 +110,7 @@ func deleteCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 	}
 }
 
-func updateCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func updateCategory(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
@@ -135,7 +134,7 @@ func updateCategory(svc todo.ToDoService) func(http.ResponseWriter, *http.Reques
 	}
 }
 
-func createTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func createTask(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		var in restapi.CreateTaskIn
@@ -152,7 +151,7 @@ func createTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func getTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func getTask(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
@@ -164,7 +163,7 @@ func getTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 
 		out, err := svc.GetTask(r.Context(), int32(id))
 		if err != nil {
-			encodeError(w, err)
+			encodeError1(w, err)
 			return
 		}
 
@@ -172,7 +171,7 @@ func getTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func deleteTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func deleteTask(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
@@ -190,7 +189,7 @@ func deleteTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func searchTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func searchTask(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := restapi.SearchTaskParams{}
 
@@ -232,7 +231,7 @@ func searchTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func finishTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func finishTask(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
@@ -252,7 +251,7 @@ func finishTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func updateTask(svc todo.ToDoService) func(http.ResponseWriter, *http.Request) {
+func updateTask(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
@@ -286,18 +285,4 @@ func encodeOutput(w http.ResponseWriter, out interface{}) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func encodeError(w http.ResponseWriter, e error) {
-	if e == nil {
-		return
-	}
-	enc := json.NewEncoder(w)
-	toDoErr, ok := e.(errors.ToDoError)
-	if !ok {
-		enc.Encode(e)
-		return
-	}
-	w.WriteHeader(toDoErr.HttpStatus)
-	enc.Encode(toDoErr)
 }

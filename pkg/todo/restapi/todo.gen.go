@@ -56,6 +56,28 @@ type CreateTaskIn struct {
 	Priority TaskPriority `json:"priority"`
 }
 
+// Error Error type.
+type Error struct {
+	// Cause Error's cause.
+	Cause         *string              `json:"cause,omitempty"`
+	ContextValues *[]ErrorContextValue `json:"contextValues,omitempty"`
+
+	// ErrorCode ToDo api's specific error code.
+	ErrorCode int32 `json:"errorCode"`
+
+	// ErrorText Error description.
+	ErrorText string `json:"errorText"`
+}
+
+// ErrorContextValue Error's context value which adds more information about an error.
+type ErrorContextValue struct {
+	// ContextLabel Context label.
+	ContextLabel string `json:"contextLabel"`
+
+	// ContextValue Context value.
+	ContextValue string `json:"contextValue"`
+}
+
 // SearchCategoryOut Response type for SearchCategory service.
 type SearchCategoryOut struct {
 	Categories *[]CategoryOut `json:"categories,omitempty"`

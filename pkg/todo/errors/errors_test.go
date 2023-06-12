@@ -1,16 +1,16 @@
 package errors
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 )
 
-func Test(t *testing.T) {
-	var err error
+func TestError(t *testing.T) {
 
-	err = &ToDoError{ErrorCode: ERROR_CODE_BAD_REQUEST}
-	s := err.Error()
+	e := errors.New("first")
+	e1 := errors.New("second")
+	e2 := errors.Join(e, e1)
 
-	fmt.Println(s)
-
+	fmt.Println(errors.Unwrap(e2))
 }
