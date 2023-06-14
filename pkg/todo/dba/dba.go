@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	ErrDatabaseError  = errors.ToDoError{ErrorCode: errors.ERROR_CODE_DATABASE_ERROR, Text: "Database operation failed", HttpStatus: http.StatusInternalServerError}
-	ErrEntityNotFound = errors.ToDoError{ErrorCode: errors.ERROR_CODE_ENTITY_NOT_FOUND, Text: "Entity not found", HttpStatus: http.StatusNotFound}
+	ErrDatabaseError       = errors.ToDoError{ErrorCode: errors.ERROR_CODE_DATABASE_ERROR, Text: "Database operation failed", HttpStatus: http.StatusInternalServerError}
+	ErrEntityNotFound      = errors.ToDoError{ErrorCode: errors.ERROR_CODE_ENTITY_NOT_FOUND, Text: "Entity not found", HttpStatus: http.StatusNotFound}
+	ErrEntityAlreadyExists = errors.ToDoError{ErrorCode: errors.ERROR_CODE_ENTITY_ALREADY_EXISTS, Text: "Entity already exists", HttpStatus: http.StatusUnprocessableEntity}
 )
 
 type DatabaseAccess struct {

@@ -2,10 +2,12 @@ package dba
 
 import (
 	"database/sql"
+	stderrors "errors"
 	"fmt"
 	"todo/pkg/todo/errors"
 
 	"github.com/elgris/sqrl"
+	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -29,6 +31,11 @@ func (da *DatabaseAccess) InsertCategory(tx *sqlx.Tx, c *Category) (int32, error
 	}
 
 	if err != nil {
+		var me *mysql.MySQLError
+		if ok := stderrors.As(err, &me); ok && me.Number == 1062 {
+			err1 := errors.WithContextValue(ErrEntityAlreadyExists, "entity", "Category")
+			return 0, err1
+		}
 		err1 := errors.WithCause(ErrDatabaseError, err)
 		err1 = errors.WithContextValue(err1, "operation", "InsertCategory")
 		return 0, err1
