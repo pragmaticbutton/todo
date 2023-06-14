@@ -3,6 +3,7 @@ module todo
 go 1.20
 
 require (
+	github.com/caarlos0/env/v8 v8.0.0
 	github.com/elgris/sqrl v0.0.0-20210727210741-7e0198b30236
 	github.com/getkin/kin-openapi v0.118.0
 	github.com/go-sql-driver/mysql v1.7.1

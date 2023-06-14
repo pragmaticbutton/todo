@@ -2,7 +2,8 @@ package config
 
 import (
 	"fmt"
-	"os"
+
+	"github.com/caarlos0/env/v8"
 )
 
 type Config struct {
@@ -10,7 +11,7 @@ type Config struct {
 }
 
 type DbConfig struct {
-	Dsn string
+	Dsn string `env:"TODO_DB_DSN"`
 }
 
 func (c *DbConfig) Validate() error {
@@ -22,24 +23,10 @@ func (c *DbConfig) Validate() error {
 
 func ReadConfig() (*Config, error) {
 
-	dbConfig, err := readDbConfig()
-	if err != nil {
-		return nil, err
-	}
-	if err := dbConfig.Validate(); err != nil {
+	cfg := Config{}
+	if err := env.Parse(&cfg); err != nil {
 		return nil, err
 	}
 
-	c := Config{DbConfig: *dbConfig}
-	return &c, nil
-}
-
-func readDbConfig() (*DbConfig, error) {
-
-	dsn, err := os.LookupEnv("TODO_DB_DSN")
-	if !err {
-		return nil, fmt.Errorf("environment variable TODO_DB_DSN not found")
-	}
-
-	return &DbConfig{Dsn: dsn}, nil
+	return &cfg, nil
 }
