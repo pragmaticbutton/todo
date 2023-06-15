@@ -60,3 +60,44 @@ func (da *DatabaseAccess) ExecuteInTransaction(f func(tx *sqlx.Tx) error) error 
 
 	return nil
 }
+
+type Pagination struct {
+	startIndex     *int32
+	recordsPerPage *int32
+	orderBy        *string
+	orderDirection *string
+}
+
+type PaginationOption func(*Pagination)
+
+func WithStartIndex(startIndex *int32) PaginationOption {
+	return func(p *Pagination) {
+		p.startIndex = startIndex
+	}
+}
+
+func WithRecordsPerPage(recordsPerPage *int32) PaginationOption {
+	return func(p *Pagination) {
+		p.recordsPerPage = recordsPerPage
+	}
+}
+
+func WithOrderBy(orderBy *string) PaginationOption {
+	return func(p *Pagination) {
+		p.orderBy = orderBy
+	}
+}
+
+func WithOrderDirection(orderDirection *string) PaginationOption {
+	return func(p *Pagination) {
+		p.orderDirection = orderDirection
+	}
+}
+
+func NewPagination(opts ...PaginationOption) *Pagination {
+	p := &Pagination{}
+	for _, opt := range opts {
+		opt(p)
+	}
+	return p
+}

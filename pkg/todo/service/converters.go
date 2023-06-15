@@ -115,3 +115,35 @@ func dbaToRestTaskPriority(in dba.TaskPriorityType) restapi.TaskPriority {
 
 	panic("unsupported task priority: " + in)
 }
+
+func restToDbaCategoryOrderBy(in restapi.CategoryOrderByEnum) string {
+	if in == "" {
+		return ""
+	}
+
+	switch in {
+	case restapi.Name:
+		return "name"
+	case restapi.Created:
+		return "created"
+	case restapi.LastChanged:
+		return "last_changed"
+	}
+
+	panic("unsupported category orderBy: " + in)
+}
+
+func restToDbaOrderDirection(in restapi.OrderDirection) string {
+	if in == "" {
+		return ""
+	}
+
+	switch in {
+	case restapi.Asc:
+		return "asc"
+	case restapi.Desc:
+		return "desc"
+	}
+
+	panic("unsupported order direction: " + in)
+}

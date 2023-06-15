@@ -82,11 +82,31 @@ func (da *DatabaseAccess) GetCategoryById(tx *sqlx.Tx, id int32) (*Category, err
 	return &c, nil
 }
 
-func (da *DatabaseAccess) SearchCategory(tx *sqlx.Tx, name *string) ([]Category, error) {
+func (da *DatabaseAccess) SearchCategory(tx *sqlx.Tx, name *string, p *Pagination) ([]Category, error) {
 
 	s := sqrl.Select("*").From("category")
 	if name != nil {
 		s = s.Where("name LIKE ?", *name)
+	}
+
+	if p != nil {
+		var od string
+		if p.orderDirection != nil {
+			od = *p.orderDirection
+		} else {
+			od = "asc"
+		}
+		if p.orderBy != nil {
+			s = s.OrderBy(*p.orderBy + " " + od)
+		} else {
+			s = s.OrderBy("id" + " " + od)
+		}
+		if p.startIndex != nil {
+			s = s.Offset(uint64(*p.startIndex))
+		}
+		if p.recordsPerPage != nil {
+			s = s.Limit(uint64(*p.recordsPerPage))
+		}
 	}
 
 	stmt, params, err := s.ToSql()

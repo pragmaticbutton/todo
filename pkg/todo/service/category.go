@@ -56,7 +56,7 @@ func (svc *toDoService) SearchCategory(ctx context.Context, params *restapi.Sear
 		name = &n
 	}
 
-	cs, err := svc.da.SearchCategory(nil, name)
+	cs, err := svc.da.SearchCategory(nil, name, paginationForCategory(params))
 	if err != nil {
 		return nil, err
 	}
@@ -129,4 +129,25 @@ func updateCategoryWithValuesFromRequest(c *dba.Category, in *restapi.UpdateCate
 	if in.Description != nil {
 		c.Description = sql.NullString{String: *in.Description, Valid: true}
 	}
+}
+
+func paginationForCategory(params *restapi.SearchCategoryParams) *dba.Pagination {
+	opts := []dba.PaginationOption{}
+
+	if params.OrderBy != nil {
+		ob := restToDbaCategoryOrderBy(*params.OrderBy)
+		opts = append(opts, dba.WithOrderBy(&ob))
+	}
+	if params.OrderDirection != nil {
+		od := restToDbaOrderDirection(*params.OrderDirection)
+		opts = append(opts, dba.WithOrderDirection(&od))
+	}
+	if params.StartIndex != nil {
+		opts = append(opts, dba.WithStartIndex(params.StartIndex))
+	}
+	if params.RecordsPerPage != nil {
+		opts = append(opts, dba.WithRecordsPerPage(params.RecordsPerPage))
+	}
+
+	return dba.NewPagination(opts...)
 }

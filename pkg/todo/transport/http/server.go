@@ -82,6 +82,40 @@ func searchCategory(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(htt
 			params.Name = &name
 		}
 
+		orderBy := r.FormValue("orderBy")
+		if orderBy != "" {
+			ob := restapi.CategoryOrderByEnum(orderBy)
+			params.OrderBy = &ob
+		}
+
+		orderDirection := r.FormValue("orderDirection")
+		if orderDirection != "" {
+			od := restapi.OrderDirection(orderDirection)
+			params.OrderDirection = &od
+		}
+
+		startIndex := r.FormValue("startIndex")
+		if startIndex != "" {
+			si, err := strconv.Atoi(startIndex)
+			if err != nil {
+				encodeError(w, err)
+				return
+			}
+			si32 := int32(si)
+			params.StartIndex = &si32
+		}
+
+		recordsPerPage := r.FormValue("recordsPerPage")
+		if startIndex != "" {
+			rpp, err := strconv.Atoi(recordsPerPage)
+			if err != nil {
+				encodeError(w, err)
+				return
+			}
+			rpp32 := int32(rpp)
+			params.RecordsPerPage = &rpp32
+		}
+
 		out, err := svc.SearchCategory(r.Context(), &params)
 		if err != nil {
 			encodeError(w, err)

@@ -36,6 +36,12 @@ components:
           description: Error's cause.
           example: ... #TODO
       required: [errorCode, errorText]
+    
+    OrderDirection:
+      title: OrderDirection
+      description: OrderDirection
+      type: string
+      enum: [asc, desc]
 
     ErrorContextValue:
       title: ErrorContextValue
@@ -130,6 +136,12 @@ components:
           maxLength: 255
           description: Category description.
           example: Category for health related tasks.
+    
+    CategoryOrderByEnum:
+      title: CategoryOrderByEnum
+      description: Values by which categories can be ordered.
+      type: string
+      enum: [name, created, lastChanged]
 
     ###########################
     # Task schemas
@@ -394,6 +406,31 @@ paths:
         description: Category name. Supports wildcards (*).
         schema:
           type: string
+      - name: orderBy
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/CategoryOrderByEnum'
+      - name: OrderDirection
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/OrderDirection'
+      - name: startIndex
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: recordsPerPage
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+          maxLength: 100
       responses:
         "200": 
           description: Categories successfully retrieved.

@@ -7,12 +7,28 @@ import (
 	"time"
 )
 
+// Defines values for CategoryOrderByEnum.
+const (
+	Created     CategoryOrderByEnum = "created"
+	LastChanged CategoryOrderByEnum = "lastChanged"
+	Name        CategoryOrderByEnum = "name"
+)
+
+// Defines values for OrderDirection.
+const (
+	Asc  OrderDirection = "asc"
+	Desc OrderDirection = "desc"
+)
+
 // Defines values for TaskPriority.
 const (
 	HIGH   TaskPriority = "HIGH"
 	LOW    TaskPriority = "LOW"
 	MEDIUM TaskPriority = "MEDIUM"
 )
+
+// CategoryOrderByEnum Values by which categories can be ordered.
+type CategoryOrderByEnum string
 
 // CategoryOut Response type for category related services.
 type CategoryOut struct {
@@ -77,6 +93,9 @@ type ErrorContextValue struct {
 	// ContextValue Context value.
 	ContextValue string `json:"contextValue"`
 }
+
+// OrderDirection OrderDirection
+type OrderDirection string
 
 // SearchCategoryOut Response type for SearchCategory service.
 type SearchCategoryOut struct {
@@ -148,7 +167,11 @@ type UpdateTaskIn struct {
 // SearchCategoryParams defines parameters for SearchCategory.
 type SearchCategoryParams struct {
 	// Name Category name. Supports wildcards (*).
-	Name *string `form:"name,omitempty" json:"name,omitempty"`
+	Name           *string              `form:"name,omitempty" json:"name,omitempty"`
+	OrderBy        *CategoryOrderByEnum `form:"orderBy,omitempty" json:"orderBy,omitempty"`
+	OrderDirection *OrderDirection      `form:"OrderDirection,omitempty" json:"OrderDirection,omitempty"`
+	StartIndex     *int32               `form:"startIndex,omitempty" json:"startIndex,omitempty"`
+	RecordsPerPage *int32               `form:"recordsPerPage,omitempty" json:"recordsPerPage,omitempty"`
 }
 
 // SearchTaskParams defines parameters for SearchTask.

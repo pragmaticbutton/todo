@@ -74,12 +74,14 @@ func TestSearchCategory(t *testing.T) {
 	da.InsertCategory(nil, &c2)
 
 	n := "medita%"
-	cs, err := da.SearchCategory(nil, &n)
+	var si int32 = 1
+	var rpp int32 = 5
+	cs, err := da.SearchCategory(nil, &n, NewPagination(WithStartIndex(&si), WithRecordsPerPage(&rpp)))
 
 	assert.Nil(t, err)
 	assert.NotNil(t, cs)
 	assert.NotEmpty(t, cs)
-	assert.Len(t, cs, 2)
+	assert.Len(t, cs, 1)
 }
 
 func TestDeleteCategory(t *testing.T) {
