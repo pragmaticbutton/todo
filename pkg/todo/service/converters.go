@@ -122,11 +122,11 @@ func restToDbaCategoryOrderBy(in restapi.CategoryOrderByEnum) string {
 	}
 
 	switch in {
-	case restapi.Name:
+	case restapi.CategoryOrderByEnumName:
 		return "name"
-	case restapi.Created:
+	case restapi.CategoryOrderByEnumCreated:
 		return "created"
-	case restapi.LastChanged:
+	case restapi.CategoryOrderByEnumLastChanged:
 		return "last_changed"
 	}
 
@@ -146,4 +146,27 @@ func restToDbaOrderDirection(in restapi.OrderDirection) string {
 	}
 
 	panic("unsupported order direction: " + in)
+}
+
+func restToDbaTaskOrderBy(in restapi.TaskOrderByEnum) string {
+	if in == "" {
+		return ""
+	}
+
+	switch in {
+	case restapi.TaskOrderByEnumCreated:
+		return "created"
+	case restapi.TaskOrderByEnumDone:
+		return "done"
+	case restapi.TaskOrderByEnumFkCategory:
+		return "fk_category"
+	case restapi.TaskOrderByEnumLastChanged:
+		return "last_changed"
+	case restapi.TaskOrderByEnumName:
+		return "name"
+	case restapi.TaskOrderByEnumPriority:
+		return "priority"
+	}
+
+	panic("unsupported task orderBy: " + in)
 }

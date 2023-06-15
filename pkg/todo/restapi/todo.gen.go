@@ -9,15 +9,25 @@ import (
 
 // Defines values for CategoryOrderByEnum.
 const (
-	Created     CategoryOrderByEnum = "created"
-	LastChanged CategoryOrderByEnum = "lastChanged"
-	Name        CategoryOrderByEnum = "name"
+	CategoryOrderByEnumCreated     CategoryOrderByEnum = "created"
+	CategoryOrderByEnumLastChanged CategoryOrderByEnum = "lastChanged"
+	CategoryOrderByEnumName        CategoryOrderByEnum = "name"
 )
 
 // Defines values for OrderDirection.
 const (
 	Asc  OrderDirection = "asc"
 	Desc OrderDirection = "desc"
+)
+
+// Defines values for TaskOrderByEnum.
+const (
+	TaskOrderByEnumCreated     TaskOrderByEnum = "created"
+	TaskOrderByEnumDone        TaskOrderByEnum = "done"
+	TaskOrderByEnumFkCategory  TaskOrderByEnum = "fkCategory"
+	TaskOrderByEnumLastChanged TaskOrderByEnum = "lastChanged"
+	TaskOrderByEnumName        TaskOrderByEnum = "name"
+	TaskOrderByEnumPriority    TaskOrderByEnum = "priority"
 )
 
 // Defines values for TaskPriority.
@@ -107,6 +117,9 @@ type SearchTaskOut struct {
 	Tasks *[]TaskOut `json:"tasks,omitempty"`
 }
 
+// TaskOrderByEnum Values by which tasks can be ordered.
+type TaskOrderByEnum string
+
 // TaskOut Resopnse type for task services.
 type TaskOut struct {
 	// CategoryId Id of the category this tasks belongs.
@@ -186,7 +199,11 @@ type SearchTaskParams struct {
 	Done *bool `form:"done,omitempty" json:"done,omitempty"`
 
 	// Priority Priority of the task.
-	Priority *TaskPriority `form:"priority,omitempty" json:"priority,omitempty"`
+	Priority       *TaskPriority    `form:"priority,omitempty" json:"priority,omitempty"`
+	OrderBy        *TaskOrderByEnum `form:"orderBy,omitempty" json:"orderBy,omitempty"`
+	OrderDirection *OrderDirection  `form:"OrderDirection,omitempty" json:"OrderDirection,omitempty"`
+	StartIndex     *int32           `form:"startIndex,omitempty" json:"startIndex,omitempty"`
+	RecordsPerPage *int32           `form:"recordsPerPage,omitempty" json:"recordsPerPage,omitempty"`
 }
 
 // CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.

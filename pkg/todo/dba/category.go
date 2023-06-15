@@ -106,6 +106,9 @@ func (da *DatabaseAccess) SearchCategory(tx *sqlx.Tx, name *string, p *Paginatio
 		}
 		if p.recordsPerPage != nil {
 			s = s.Limit(uint64(*p.recordsPerPage))
+		} else {
+			// mysql doesn't support offset without limit, so this is workaround around that
+			s = s.Limit(uint64(18446744073709551615))
 		}
 	}
 

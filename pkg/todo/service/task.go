@@ -87,7 +87,7 @@ func (svc *toDoService) SearchTask(ctx context.Context, params *restapi.SearchTa
 		done = &d
 
 	}
-	ts, err := svc.da.SearchTask(nil, name, params.CategoryId, taskPriorityForSearch(params.Priority), done)
+	ts, err := svc.da.SearchTask(nil, name, params.CategoryId, taskPriorityForSearch(params.Priority), done, paginationForTask(params))
 	if err != nil {
 		return nil, err
 	}
@@ -189,4 +189,25 @@ func updateTaskWithValuesFromRequest(t *dba.Task, in *restapi.UpdateTaskIn) {
 	if in.Priority != nil {
 		t.Priority = restToDbaTaskPriority(*in.Priority)
 	}
+}
+
+func paginationForTask(params *restapi.SearchTaskParams) *dba.Pagination {
+	opts := []dba.PaginationOption{}
+
+	if params.OrderBy != nil {
+		ob := restToDbaTaskOrderBy(*params.OrderBy)
+		opts = append(opts, dba.WithOrderBy(&ob))
+	}
+	if params.OrderDirection != nil {
+		od := restToDbaOrderDirection(*params.OrderDirection)
+		opts = append(opts, dba.WithOrderDirection(&od))
+	}
+	if params.StartIndex != nil {
+		opts = append(opts, dba.WithStartIndex(params.StartIndex))
+	}
+	if params.RecordsPerPage != nil {
+		opts = append(opts, dba.WithRecordsPerPage(params.RecordsPerPage))
+	}
+
+	return dba.NewPagination(opts...)
 }

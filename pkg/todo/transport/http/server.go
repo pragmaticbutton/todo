@@ -106,7 +106,7 @@ func searchCategory(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(htt
 		}
 
 		recordsPerPage := r.FormValue("recordsPerPage")
-		if startIndex != "" {
+		if recordsPerPage != "" {
 			rpp, err := strconv.Atoi(recordsPerPage)
 			if err != nil {
 				encodeError(w, err)
@@ -253,6 +253,40 @@ func searchTask(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.Re
 		if done != "" && (done == "false" || done == "true") {
 			d := done == "true"
 			params.Done = &d
+		}
+
+		orderBy := r.FormValue("orderBy")
+		if orderBy != "" {
+			ob := restapi.TaskOrderByEnum(orderBy)
+			params.OrderBy = &ob
+		}
+
+		orderDirection := r.FormValue("orderDirection")
+		if orderDirection != "" {
+			od := restapi.OrderDirection(orderDirection)
+			params.OrderDirection = &od
+		}
+
+		startIndex := r.FormValue("startIndex")
+		if startIndex != "" {
+			si, err := strconv.Atoi(startIndex)
+			if err != nil {
+				encodeError(w, err)
+				return
+			}
+			si32 := int32(si)
+			params.StartIndex = &si32
+		}
+
+		recordsPerPage := r.FormValue("recordsPerPage")
+		if recordsPerPage != "" {
+			rpp, err := strconv.Atoi(recordsPerPage)
+			if err != nil {
+				encodeError(w, err)
+				return
+			}
+			rpp32 := int32(rpp)
+			params.RecordsPerPage = &rpp32
 		}
 
 		out, err := svc.SearchTask(r.Context(), &params)

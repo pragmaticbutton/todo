@@ -106,7 +106,7 @@ func (da *DatabaseAccess) DeleteTaskById(tx *sqlx.Tx, id int32) error {
 	return nil
 }
 
-func (da *DatabaseAccess) SearchTask(tx *sqlx.Tx, name *string, fkCategory *int32, priority *TaskPriorityType, done *int8) ([]Task, error) {
+func (da *DatabaseAccess) SearchTask(tx *sqlx.Tx, name *string, fkCategory *int32, priority *TaskPriorityType, done *int8, p *Pagination) ([]Task, error) {
 
 	s := sqrl.Select("*").From("task")
 	if name != nil {
@@ -123,6 +123,29 @@ func (da *DatabaseAccess) SearchTask(tx *sqlx.Tx, name *string, fkCategory *int3
 
 	if done != nil {
 		s = s.Where(sqrl.Eq{"done": *done})
+	}
+
+	if p != nil {
+		var od string
+		if p.orderDirection != nil {
+			od = *p.orderDirection
+		} else {
+			od = "asc"
+		}
+		if p.orderBy != nil {
+			s = s.OrderBy(*p.orderBy + " " + od)
+		} else {
+			s = s.OrderBy("id" + " " + od)
+		}
+		if p.startIndex != nil {
+			s = s.Offset(uint64(*p.startIndex))
+		}
+		if p.recordsPerPage != nil {
+			s = s.Limit(uint64(*p.recordsPerPage))
+		} else {
+			// mysql doesn't support offset without limit, so this is workaround around that
+			s = s.Limit(uint64(18446744073709551615))
+		}
 	}
 
 	stmt, params, err := s.ToSql()

@@ -258,6 +258,12 @@ components:
           description: Task description.
           example: Run 3 km.
 
+    TaskOrderByEnum:
+      title: TaskOrderByEnum
+      description: Values by which tasks can be ordered.
+      type: string
+      enum: [name, fkCategory, priority, done, created, lastChanged]
+
 paths:
   
   /v1/category/{id}:
@@ -515,6 +521,31 @@ paths:
         description: Priority of the task.
         schema:
           $ref: '#/components/schemas/TaskPriority'
+      - name: orderBy
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/TaskOrderByEnum'
+      - name: OrderDirection
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/OrderDirection'
+      - name: startIndex
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: recordsPerPage
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+          maxLength: 100
       responses:
         "200": 
           description: Tasks successfully retrieved.

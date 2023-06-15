@@ -50,7 +50,7 @@ func TestGetTaskById(t *testing.T) {
 	tId, _ := da.InsertTask(nil, &task)
 
 	// TODO: check why is this necessary...
-	time.Sleep(time.Nanosecond * 10)
+	time.Sleep(time.Nanosecond * 50)
 
 	task1, err := da.GetTaskById(nil, tId)
 
@@ -131,7 +131,8 @@ func TestSearchTask(t *testing.T) {
 
 	n := "%homework"
 	p := TASK_PRIORITY_MEDIUM
-	ts, err := da.SearchTask(nil, &n, nil, &p, nil)
+	rpp := int32(1)
+	ts, err := da.SearchTask(nil, &n, nil, &p, nil, NewPagination(WithRecordsPerPage(&rpp)))
 
 	assert.Nil(t, err)
 	assert.Len(t, ts, 1)
