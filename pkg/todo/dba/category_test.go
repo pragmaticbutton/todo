@@ -84,6 +84,24 @@ func TestSearchCategory(t *testing.T) {
 	assert.Len(t, cs, 1)
 }
 
+func TestCountCategory(t *testing.T) {
+	teardownTestCase := setupTestCase()
+	defer teardownTestCase()
+
+	// prepare categories
+	c1 := Category{Name: "meditation1", Description: sql.NullString{Valid: true, String: "Category for meditation tasks."}}
+	da.InsertCategory(nil, &c1)
+
+	c2 := Category{Name: "meditation2", Description: sql.NullString{Valid: true, String: "Category for meditation tasks."}}
+	da.InsertCategory(nil, &c2)
+
+	n := "medita%"
+	c, err := da.CountCategory(nil, &n)
+
+	assert.Nil(t, err)
+	assert.Equal(t, int32(2), c)
+}
+
 func TestDeleteCategory(t *testing.T) {
 	teardownTestCase := setupTestCase()
 	defer teardownTestCase()

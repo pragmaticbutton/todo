@@ -96,7 +96,12 @@ func (svc *toDoService) SearchTask(ctx context.Context, params *restapi.SearchTa
 	for i, t := range ts {
 		tsOut[i] = *dbaToRestTaskOut(&t)
 	}
-	out := restapi.SearchTaskOut{Tasks: &tsOut}
+	count, err := svc.da.CountTask(nil, name, params.CategoryId, taskPriorityForSearch(params.Priority), done)
+	if err != nil {
+		return nil, err
+	}
+
+	out := restapi.SearchTaskOut{Tasks: &tsOut, StartIndex: params.StartIndex, TotalRecords: count}
 
 	return &out, nil
 }

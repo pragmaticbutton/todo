@@ -134,6 +134,35 @@ func (da *DatabaseAccess) SearchCategory(tx *sqlx.Tx, name *string, p *Paginatio
 	return cs, nil
 }
 
+func (da *DatabaseAccess) CountCategory(tx *sqlx.Tx, name *string) (int32, error) {
+
+	s := sqrl.Select("COUNT(*)").From("category")
+	if name != nil {
+		s = s.Where("name LIKE ?", *name)
+	}
+
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "CountCategory")
+		return 0, err1
+	}
+
+	var res int
+	if tx == nil {
+		err = da.db.Get(&res, stmt, params...)
+	} else {
+		err = tx.Get(&res, stmt, params...)
+	}
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "CountCategory")
+		return 0, err1
+	}
+
+	return int32(res), nil
+}
+
 func (da *DatabaseAccess) DeleteCategoryById(tx *sqlx.Tx, id int32) error {
 
 	s := sqrl.Delete().From("category").Where(sqrl.Eq{"id": id})

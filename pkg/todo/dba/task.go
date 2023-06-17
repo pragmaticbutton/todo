@@ -170,6 +170,47 @@ func (da *DatabaseAccess) SearchTask(tx *sqlx.Tx, name *string, fkCategory *int3
 	return ts, nil
 }
 
+func (da *DatabaseAccess) CountTask(tx *sqlx.Tx, name *string, fkCategory *int32, priority *TaskPriorityType, done *int8) (int32, error) {
+
+	s := sqrl.Select("COUNT(*)").From("task")
+	if name != nil {
+		s = s.Where("name LIKE ?", *name)
+	}
+
+	if fkCategory != nil {
+		s = s.Where(sqrl.Eq{"fk_category": *fkCategory})
+	}
+
+	if priority != nil {
+		s = s.Where(sqrl.Eq{"priority": *priority})
+	}
+
+	if done != nil {
+		s = s.Where(sqrl.Eq{"done": *done})
+	}
+
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "CountTask")
+		return 0, err1
+	}
+
+	var c int
+	if tx == nil {
+		err = da.db.Get(&c, stmt, params...)
+	} else {
+		err = tx.Get(&c, stmt, params...)
+	}
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "CountTask")
+		return 0, err1
+	}
+
+	return int32(c), nil
+}
+
 func (da *DatabaseAccess) UpdateTask(tx *sqlx.Tx, t *Task) error {
 
 	s := sqrl.Update("task").Set("name", t.Name).Set("description", t.Description).

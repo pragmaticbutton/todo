@@ -110,11 +110,22 @@ type OrderDirection string
 // SearchCategoryOut Response type for SearchCategory service.
 type SearchCategoryOut struct {
 	Categories *[]CategoryOut `json:"categories,omitempty"`
+
+	// StartIndex Start index from searchTask's request.
+	StartIndex *int32 `json:"startIndex,omitempty"`
+
+	// TotalRecords Total records of tasks that satisfy the parameters from request.
+	TotalRecords int32 `json:"totalRecords"`
 }
 
 // SearchTaskOut Response type for SearchTask service.
 type SearchTaskOut struct {
-	Tasks *[]TaskOut `json:"tasks,omitempty"`
+	// StartIndex Start index from searchTask's request.
+	StartIndex *int32     `json:"startIndex,omitempty"`
+	Tasks      *[]TaskOut `json:"tasks,omitempty"`
+
+	// TotalRecords Total records of tasks that satisfy the parameters from request.
+	TotalRecords int32 `json:"totalRecords"`
 }
 
 // TaskOrderByEnum Values by which tasks can be ordered.

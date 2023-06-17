@@ -138,6 +138,45 @@ func TestSearchTask(t *testing.T) {
 	assert.Len(t, ts, 1)
 }
 
+func TestCountTask(t *testing.T) {
+	teardownTestCase := setupTestCase()
+	defer teardownTestCase()
+
+	// prepare category
+	c := Category{Name: "school", Description: sql.NullString{String: "School related tasks", Valid: true}}
+	cId, _ := da.InsertCategory(nil, &c)
+
+	time.Sleep(time.Nanosecond * 15)
+
+	// prepare tasks
+	task1 := Task{
+		Name:        "geography homework",
+		FkCategory:  cId,
+		Priority:    TASK_PRIORITY_MEDIUM,
+		Done:        0,
+		Description: sql.NullString{String: "Finish geography homework", Valid: true},
+	}
+	da.InsertTask(nil, &task1)
+
+	// prepare tasks
+	task2 := Task{
+		Name:        "history homework",
+		FkCategory:  cId,
+		Priority:    TASK_PRIORITY_LOW,
+		Done:        0,
+		Description: sql.NullString{String: "Finish history homework", Valid: true},
+	}
+	da.InsertTask(nil, &task2)
+
+	time.Sleep(time.Nanosecond * 60)
+
+	n := "%homework"
+	count, err := da.CountTask(nil, &n, nil, nil, nil)
+
+	assert.Nil(t, err)
+	assert.Equal(t, int32(2), count)
+}
+
 func TestUpdateTask(t *testing.T) {
 	teardownTestCase := setupTestCase()
 	defer teardownTestCase()

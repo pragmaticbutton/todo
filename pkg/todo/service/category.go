@@ -65,7 +65,12 @@ func (svc *toDoService) SearchCategory(ctx context.Context, params *restapi.Sear
 	for i, c := range cs {
 		csOut[i] = *dbaToRestCategoryOut(&c)
 	}
-	out := &restapi.SearchCategoryOut{Categories: &csOut}
+	count, err := svc.da.CountCategory(nil, name)
+	if err != nil {
+		return nil, err
+	}
+
+	out := &restapi.SearchCategoryOut{Categories: &csOut, StartIndex: params.StartIndex, TotalRecords: count}
 
 	return out, nil
 }

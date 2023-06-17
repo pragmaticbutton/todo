@@ -119,6 +119,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CategoryOut'
+        startIndex:
+          type: integer
+          format: int32
+          description: Start index from searchTask's request.
+          example: 5
+        totalRecords:
+          type: integer
+          format: int32
+          description: Total records of tasks that satisfy the parameters from request.
+          example: 50
+      required: [totalRecords]
 
     UpdateCategoryIn:
       title: UpdateCategoryIn
@@ -229,6 +240,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TaskOut'
+        startIndex:
+          type: integer
+          format: int32
+          description: Start index from searchTask's request.
+          example: 5
+        totalRecords:
+          type: integer
+          format: int32
+          description: Total records of tasks that satisfy the parameters from request.
+          example: 50
+      required: [totalRecords]
 
     UpdateTaskIn:
       title: UpdateTaskIn
