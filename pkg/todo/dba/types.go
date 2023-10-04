@@ -33,3 +33,12 @@ type Category struct {
 	Created     time.Time      `db:"created"`
 	LastChanged time.Time      `db:"last_changed"`
 }
+
+// User struct represents user table.
+type User struct {
+	Id          int32     `db:"id"`
+	Username    string    `db:"username"`
+	Password    string    `db:"password"`
+	Created     time.Time `db:"created"`
+	LastChanged time.Time `db:"last_changed"`
+}

@@ -33,6 +33,9 @@ func NewHTTPHandler(svc todo.ToDoService, encodeError ErrorEncoderFunc, mws ...m
 	r.HandleFunc("/v1/task", searchTask(svc, encodeError)).Methods("GET")
 	r.HandleFunc("/v1/task/{id}/finish", finishTask(svc, encodeError)).Methods("PATCH")
 
+	// user
+	r.HandleFunc("/v1/user", createUser(svc, encodeError)).Methods("POST")
+
 	return r
 }
 
@@ -334,6 +337,23 @@ func updateTask(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.Re
 		d.Decode(&in)
 
 		out, err := svc.UpdateTask(r.Context(), int32(id), &in)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		encodeOutput(w, out)
+	}
+}
+
+func createUser(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var in restapi.CreateUserIn
+		d := json.NewDecoder(r.Body)
+		d.Decode(&in)
+
+		out, err := svc.CreateUser(r.Context(), &in)
 		if err != nil {
 			encodeError(w, err)
 			return

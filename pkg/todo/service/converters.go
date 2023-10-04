@@ -170,3 +170,32 @@ func restToDbaTaskOrderBy(in restapi.TaskOrderByEnum) string {
 
 	panic("unsupported task orderBy: " + in)
 }
+
+func restToDbaCreateUserIn(in *restapi.CreateUserIn) *dba.User {
+	if in == nil {
+		return nil
+	}
+
+	out := &dba.User{
+		Username: in.Username,
+		Password: in.Password,
+	}
+
+	return out
+}
+
+func dbaToRestUserOut(in *dba.User) *restapi.UserOut {
+	if in == nil {
+		return nil
+	}
+
+	out := &restapi.UserOut{
+		Id:          in.Id,
+		Username:    in.Username,
+		Password:    in.Password, // TODO
+		Created:     in.Created,
+		LastChanged: in.LastChanged,
+	}
+
+	return out
+}

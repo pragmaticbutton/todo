@@ -1,8 +1,16 @@
 openapi: 3.0.1
 
+servers: [
+  url: localhost:8090
+]
+
 info:
   title: API for todo app #TODO
   version: 0.0.1
+  contact:
+    email: jzivovic96@gmail.com
+  description: Some description #TODO
+  
 
 components:
 
@@ -285,6 +293,60 @@ components:
       description: Values by which tasks can be ordered.
       type: string
       enum: [name, fkCategory, priority, done, created, lastChanged]
+
+    ###########################
+    # Task schemas
+    ###########################
+
+    CreateUserIn:
+      title: CreateUserIn
+      description: Request type for CreateUser service.
+      type: object
+      properties:
+        username: 
+          type: string
+          minLength: 1
+          maxLength: 45
+          description: Username of a user.
+          example: pragmaticbutton
+        password:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Password of a user.
+      required: [username, password]
+    
+    UserOut:
+      title: CreateUserIn
+      description: Request type for CreateUser service.
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Unique identifier of a task.
+        username: 
+          type: string
+          minLength: 1
+          maxLength: 45
+          description: Username of a user.
+          example: pragmaticbutton
+        password:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Password of a user.
+        created:
+          type: string
+          format: date-time
+          description: Point in time when this task was created.
+          example: "2023-06-05T11:11:11Z"
+        lastChanged:
+          type: string
+          format: date-time
+          description: Point in time when this task was last modified.
+          example: "2023-06-06T11:11:11Z"
+      required: [id, username, password, created, lastChanged]
 
 paths:
   
@@ -716,6 +778,42 @@ paths:
                 $ref: '#/components/schemas/Error'
         "404":
           description: Task wasn't found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /v1/user:
+    post:
+      summary: Create user
+      operationId: createUser
+      description: Create new user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserIn'
+      responses:
+        "200": 
+          description: User successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "422":
+          description: Category already exists.
           content:
             application/json:
               schema:
