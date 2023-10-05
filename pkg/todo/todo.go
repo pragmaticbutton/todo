@@ -24,4 +24,7 @@ type ToDoService interface {
 
 	// user services
 	CreateUser(ctx context.Context, in *restapi.CreateUserIn) (*restapi.UserOut, error)
+	GetUser(ctx context.Context, id int32) (*restapi.UserOut, error)
+	DeleteUser(ctx context.Context, id int32) error
+	SearchUser(ctx context.Context, params *restapi.SearchUserParams) (*restapi.SearchUserOut, error)
 }

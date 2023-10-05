@@ -295,7 +295,7 @@ components:
       enum: [name, fkCategory, priority, done, created, lastChanged]
 
     ###########################
-    # Task schemas
+    # User schemas
     ###########################
 
     CreateUserIn:
@@ -347,6 +347,16 @@ components:
           description: Point in time when this task was last modified.
           example: "2023-06-06T11:11:11Z"
       required: [id, username, password, created, lastChanged]
+
+    SearchUserOut:
+      title: SearchUserOut
+      description: Response type for SearchUser service.
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserOut'
 
 paths:
   
@@ -814,6 +824,102 @@ paths:
                 $ref: '#/components/schemas/Error'
         "422":
           description: Category already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: Search user
+      operationId: searchUser
+      description: Search users by various provided parameters.
+      parameters:
+      - name: username
+        in: query
+        required: false
+        description: Username. Supports wildcards (*).
+        schema:
+          type: string
+      responses:
+        "200": 
+          description: Users successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchUserOut'
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /v1/user/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: User's unique identifier.
+        schema:
+          type: integer
+          format: int32
+    get:
+      summary: Get user
+      description: Get user by unique identifier.
+      operationId: getUser
+      responses:
+        "200": 
+          description: Task successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: User wasn't found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete user
+      description: Delete user by unique identifier.
+      operationId: deleteUser
+      responses:
+        "200": 
+          description: User successfully deleted.
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: User wasn't found.
           content:
             application/json:
               schema:

@@ -80,3 +80,57 @@ func (da *DatabaseAccess) GetUserById(tx *sqlx.Tx, id int32) (*User, error) {
 
 	return &u, nil
 }
+
+func (da *DatabaseAccess) DeleteUserById(tx *sqlx.Tx, id int32) error {
+
+	s := sqrl.Delete().From("user").Where(sqrl.Eq{"id": id})
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "DeleteUserById")
+		return err1
+	}
+
+	if tx == nil {
+		_, err = da.db.Exec(stmt, params...)
+	} else {
+		_, err = tx.Exec(stmt, params...)
+	}
+
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "DeleteUserById")
+		return err1
+	}
+
+	return nil
+}
+
+func (da *DatabaseAccess) SearchUser(tx *sqlx.Tx, username *string) ([]User, error) {
+
+	s := sqrl.Select("*").From("user")
+	if username != nil {
+		s = s.Where("username LIKE ?", *username)
+	}
+
+	stmt, params, err := s.ToSql()
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "SearchUser")
+		return nil, err1
+	}
+
+	var us []User
+	if tx == nil {
+		err = da.db.Select(&us, stmt, params...)
+	} else {
+		err = tx.Select(&us, stmt, params...)
+	}
+	if err != nil {
+		err1 := errors.WithCause(ErrDatabaseError, err)
+		err1 = errors.WithContextValue(err1, "operation", "SearchUser")
+		return nil, err1
+	}
+
+	return us, nil
+}

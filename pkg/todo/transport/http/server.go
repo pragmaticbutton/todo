@@ -35,6 +35,9 @@ func NewHTTPHandler(svc todo.ToDoService, encodeError ErrorEncoderFunc, mws ...m
 
 	// user
 	r.HandleFunc("/v1/user", createUser(svc, encodeError)).Methods("POST")
+	r.HandleFunc("/v1/user/{id}", getUser(svc, encodeError)).Methods("GET")
+	r.HandleFunc("/v1/user/{id}", deleteUser(svc, encodeError)).Methods("DELETE")
+	r.HandleFunc("/v1/user", searchUser(svc, encodeError)).Methods("GET")
 
 	return r
 }
@@ -354,6 +357,63 @@ func createUser(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.Re
 		d.Decode(&in)
 
 		out, err := svc.CreateUser(r.Context(), &in)
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		encodeOutput(w, out)
+	}
+}
+
+func getUser(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		out, err := svc.GetUser(r.Context(), int32(id))
+		if err != nil {
+			encodeError1(w, err)
+			return
+		}
+
+		encodeOutput(w, out)
+	}
+}
+
+func deleteUser(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		err = svc.DeleteUser(r.Context(), int32(id))
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+	}
+}
+
+func searchUser(svc todo.ToDoService, encodeError ErrorEncoderFunc) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := restapi.SearchUserParams{}
+
+		name := r.FormValue("username")
+		if name != "" {
+			params.Username = &name
+		}
+
+		out, err := svc.SearchUser(r.Context(), &params)
 		if err != nil {
 			encodeError(w, err)
 			return

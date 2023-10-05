@@ -137,6 +137,11 @@ type SearchTaskOut struct {
 	TotalRecords int32 `json:"totalRecords"`
 }
 
+// SearchUserOut Response type for SearchUser service.
+type SearchUserOut struct {
+	Users *[]UserOut `json:"users,omitempty"`
+}
+
 // TaskOrderByEnum Values by which tasks can be ordered.
 type TaskOrderByEnum string
 
@@ -242,6 +247,12 @@ type SearchTaskParams struct {
 	OrderDirection *OrderDirection  `form:"OrderDirection,omitempty" json:"OrderDirection,omitempty"`
 	StartIndex     *int32           `form:"startIndex,omitempty" json:"startIndex,omitempty"`
 	RecordsPerPage *int32           `form:"recordsPerPage,omitempty" json:"recordsPerPage,omitempty"`
+}
+
+// SearchUserParams defines parameters for SearchUser.
+type SearchUserParams struct {
+	// Username Username. Supports wildcards (*).
+	Username *string `form:"username,omitempty" json:"username,omitempty"`
 }
 
 // CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.
