@@ -1,7 +1,9 @@
 package service
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"fmt"
 	"strings"
 	"todo/pkg/todo/dba"
 	"todo/pkg/todo/restapi"
@@ -178,7 +180,7 @@ func restToDbaCreateUserIn(in *restapi.CreateUserIn) *dba.User {
 
 	out := &dba.User{
 		Username: in.Username,
-		Password: in.Password,
+		Password: encryptPassword(in.Password),
 	}
 
 	return out
@@ -192,10 +194,15 @@ func dbaToRestUserOut(in *dba.User) *restapi.UserOut {
 	out := &restapi.UserOut{
 		Id:          in.Id,
 		Username:    in.Username,
-		Password:    in.Password, // TODO
 		Created:     in.Created,
 		LastChanged: in.LastChanged,
 	}
 
 	return out
+}
+
+func encryptPassword(p string) string {
+	s := sha256.New()
+	s.Write([]byte(p))
+	return fmt.Sprintf("%x", s.Sum(nil))
 }

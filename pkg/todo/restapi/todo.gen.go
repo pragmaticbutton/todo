@@ -213,9 +213,6 @@ type UserOut struct {
 	// LastChanged Point in time when this task was last modified.
 	LastChanged time.Time `json:"lastChanged"`
 
-	// Password Password of a user.
-	Password string `json:"password"`
-
 	// Username Username of a user.
 	Username string `json:"username"`
 }

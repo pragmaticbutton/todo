@@ -331,11 +331,6 @@ components:
           maxLength: 45
           description: Username of a user.
           example: pragmaticbutton
-        password:
-          type: string
-          minLength: 1
-          maxLength: 200
-          description: Password of a user.
         created:
           type: string
           format: date-time
