@@ -27,4 +27,5 @@ func setupTestCase() func() {
 func cleanDatabase() {
 	da.db.Exec("DELETE FROM category")
 	da.db.Exec("DELETE FROM task")
+	da.db.Exec("DELETE FROM user")
 }
