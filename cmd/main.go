@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	errBadRequest = errors.ToDoError{ErrorCode: errors.ERROR_CODE_BAD_REQUEST, Text: "Bad request", HttpStatus: stdhttp.StatusBadRequest}
-	errUnknown    = errors.ToDoError{ErrorCode: errors.ERROR_CODE_UNKNOWN_ERROR, Text: "Unknown error", HttpStatus: stdhttp.StatusInternalServerError}
+	errBadRequest   = errors.ToDoError{ErrorCode: errors.ERROR_CODE_BAD_REQUEST, Text: "Bad request", HttpStatus: stdhttp.StatusBadRequest}
+	errUnauthorized = errors.ToDoError{ErrorCode: errors.ERROR_CODE_UNAUTHORIZED, Text: "Unauthorized", HttpStatus: stdhttp.StatusUnauthorized}
+	errUnknown      = errors.ToDoError{ErrorCode: errors.ERROR_CODE_UNKNOWN_ERROR, Text: "Unknown error", HttpStatus: stdhttp.StatusInternalServerError}
 )
 
 func main() {
@@ -33,6 +34,7 @@ func main() {
 		svc,
 		http.ErrorEncoder(errUnknown),
 		middleware.OpenapiRequestValidatorMiddleware{ErrorEncode: http.ErrorEncoder(errBadRequest)}.Middleware,
+		middleware.BasicAuthMiddleware{ErrorEncode: http.ErrorEncoder(errUnauthorized), Da: da}.Middleware,
 	)
 
 	stdhttp.ListenAndServe("localhost:8090", httpHandler)
