@@ -23,3 +23,33 @@ func (s *Service) AddTask(desc string) (*task.Task, error) {
 	}
 	return t, nil
 }
+
+func (s *Service) ListTasks() ([]task.Task, error) {
+	return s.storage.ListTasks()
+}
+
+func (s *Service) GetTask(id uint32) (*task.Task, error) {
+	return s.storage.GetTask(id)
+}
+
+func (s *Service) DeleteTask(id uint32) error {
+	return s.storage.DeleteTask(id)
+}
+
+func (s *Service) CompleteTask(id uint32) error {
+	t, err := s.storage.GetTask(id)
+	if err != nil {
+		return err
+	}
+	t.Done = true
+	return s.storage.UpdateTask(t)
+}
+
+func (s *Service) ReopenTask(id uint32) error {
+	t, err := s.storage.GetTask(id)
+	if err != nil {
+		return err
+	}
+	t.Done = false
+	return s.storage.UpdateTask(t)
+}

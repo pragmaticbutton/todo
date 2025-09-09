@@ -2,21 +2,34 @@ package main
 
 import (
 	"fmt"
+	"todo/internal/service"
 	"todo/internal/storage"
-	"todo/internal/task"
 )
 
 func main() {
+	data := storage.New()
+	svc := service.New(data)
 
-	storage := storage.New()
-	storage.AddTask(&task.Task{
-		ID:          storage.NextID(),
-		Description: "prvi zadatak"})
-	t, _ := storage.GetTask(1)
+	t, err := svc.AddTask("first task")
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(*t)
-	t.Description = "novi opis"
-	t.Done = true
-	storage.UpdateTask(t)
-	t, _ = storage.GetTask(1)
-	fmt.Println(*t)
+
+	svc.CompleteTask(t.ID)
+
+	tasks, err := svc.ListTasks()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(tasks)
+
+	svc.ReopenTask(t.ID)
+
+	tasks, err = svc.ListTasks()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(tasks)
+
 }
