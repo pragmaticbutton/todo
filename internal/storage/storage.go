@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"sync"
 	"time"
 	"todo/internal/task"
@@ -43,6 +44,31 @@ func (s *storage) ListTasks() ([]task.Task, error) {
 
 	}
 	return ts, nil
+}
+
+func (s *storage) GetTask(id uint32) (*task.Task, error) {
+	t, ok := s.ts[id]
+	if !ok {
+		return nil, fmt.Errorf("task with id %d not found", id)
+	}
+	return t, nil
+}
+
+func (s *storage) DeleteTask(id uint32) error {
+	_, ok := s.ts[id]
+	if !ok {
+		return fmt.Errorf("task with id %d not found", id)
+	}
+	delete(data.ts, id)
+	return nil
+}
+
+func (s *storage) UpdateTask(t *task.Task) error {
+	if _, ok := s.ts[t.Id]; !ok {
+		return fmt.Errorf("task with id %d not found", t.Id)
+	}
+	s.ts[t.Id] = t
+	return nil
 }
 
 func generateID() uint32 {
