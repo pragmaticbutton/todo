@@ -37,9 +37,10 @@ func (s *storage) AddTask(desc string) error {
 }
 
 func (s *storage) ListTasks() ([]task.Task, error) {
-	ts := []task.Task{}
+	ts := make([]task.Task, 0, len(s.ts))
 	for _, t := range s.ts {
 		ts = append(ts, *t)
+
 	}
 	return ts, nil
 }
