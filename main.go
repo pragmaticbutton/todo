@@ -9,5 +9,6 @@ func main() {
 
 	storage := storage.New()
 	storage.AddTask("prikolica")
-	fmt.Println(storage.ListTasks())
+	tasks, _ := storage.ListTasks()
+	fmt.Println(tasks)
 }
