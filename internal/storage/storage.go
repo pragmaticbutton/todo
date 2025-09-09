@@ -30,7 +30,7 @@ func New() *storage {
 func (s *storage) AddTask(desc string) error {
 	id := generateID()
 	s.ts[id] = &task.Task{
-		Id:          id,
+		ID:          id,
 		Description: desc,
 		Created:     time.Now(),
 	}
@@ -64,10 +64,10 @@ func (s *storage) DeleteTask(id uint32) error {
 }
 
 func (s *storage) UpdateTask(t *task.Task) error {
-	if _, ok := s.ts[t.Id]; !ok {
-		return fmt.Errorf("task with id %d not found", t.Id)
+	if _, ok := s.ts[t.ID]; !ok {
+		return fmt.Errorf("task with id %d not found", t.ID)
 	}
-	s.ts[t.Id] = t
+	s.ts[t.ID] = t
 	return nil
 }
 

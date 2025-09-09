@@ -3,7 +3,7 @@ package task
 import "time"
 
 type Task struct {
-	Id          uint32
+	ID          uint32
 	Description string
 	Done        bool
 	Created     time.Time
@@ -11,7 +11,7 @@ type Task struct {
 
 func New(id uint32, desc string) *Task {
 	return &Task{
-		Id:          id,
+		ID:          id,
 		Description: desc,
 		Created:     time.Now(),
 	}
