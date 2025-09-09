@@ -3,22 +3,21 @@ package storage
 import (
 	"fmt"
 	"sync"
-	"time"
 	"todo/internal/task"
 )
 
-type storage struct {
+type Storage struct {
 	ts map[uint32]*task.Task
 }
 
-var data *storage
+var data *Storage
 
 var once sync.Once
 
-func New() *storage {
+func New() *Storage {
 	if data == nil {
 		once.Do(func() {
-			data = &storage{
+			data = &Storage{
 				ts: make(map[uint32]*task.Task),
 			}
 		})
@@ -27,17 +26,12 @@ func New() *storage {
 	return data
 }
 
-func (s *storage) AddTask(desc string) error {
-	id := generateID()
-	s.ts[id] = &task.Task{
-		ID:          id,
-		Description: desc,
-		Created:     time.Now(),
-	}
+func (s *Storage) AddTask(t *task.Task) error {
+	s.ts[t.ID] = t
 	return nil
 }
 
-func (s *storage) ListTasks() ([]task.Task, error) {
+func (s *Storage) ListTasks() ([]task.Task, error) {
 	ts := make([]task.Task, 0, len(s.ts))
 	for _, t := range s.ts {
 		ts = append(ts, *t)
@@ -46,7 +40,7 @@ func (s *storage) ListTasks() ([]task.Task, error) {
 	return ts, nil
 }
 
-func (s *storage) GetTask(id uint32) (*task.Task, error) {
+func (s *Storage) GetTask(id uint32) (*task.Task, error) {
 	t, ok := s.ts[id]
 	if !ok {
 		return nil, fmt.Errorf("task with id %d not found", id)
@@ -54,7 +48,7 @@ func (s *storage) GetTask(id uint32) (*task.Task, error) {
 	return t, nil
 }
 
-func (s *storage) DeleteTask(id uint32) error {
+func (s *Storage) DeleteTask(id uint32) error {
 	_, ok := s.ts[id]
 	if !ok {
 		return fmt.Errorf("task with id %d not found", id)
@@ -63,7 +57,7 @@ func (s *storage) DeleteTask(id uint32) error {
 	return nil
 }
 
-func (s *storage) UpdateTask(t *task.Task) error {
+func (s *Storage) UpdateTask(t *task.Task) error {
 	if _, ok := s.ts[t.ID]; !ok {
 		return fmt.Errorf("task with id %d not found", t.ID)
 	}
@@ -71,6 +65,6 @@ func (s *storage) UpdateTask(t *task.Task) error {
 	return nil
 }
 
-func generateID() uint32 {
-	return uint32(len(data.ts) + 1)
+func (s *Storage) NextID() uint32 {
+	return uint32(len(s.ts) + 1)
 }
