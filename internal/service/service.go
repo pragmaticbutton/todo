@@ -1,6 +1,7 @@
 package service
 
 import (
+	"time"
 	"todo/internal/storage"
 	"todo/internal/task"
 )
@@ -42,6 +43,7 @@ func (s *Service) CompleteTask(id uint32) error {
 		return err
 	}
 	t.Done = true
+	t.Updated = time.Now()
 	return s.storage.UpdateTask(t)
 }
 
@@ -51,5 +53,24 @@ func (s *Service) ReopenTask(id uint32) error {
 		return err
 	}
 	t.Done = false
+	t.Updated = time.Now()
 	return s.storage.UpdateTask(t)
+}
+
+func (s *Service) PercentDone() (uint8, error) { // TODO: what type should be returned here?
+	tasks, err := s.storage.ListTasks()
+	if err != nil {
+		return 0, err
+	}
+	if len(tasks) == 0 {
+		return 0, nil
+	}
+
+	var doneCount int
+	for _, t := range tasks {
+		if t.Done {
+			doneCount++
+		}
+	}
+	return uint8((doneCount * 100) / len(tasks)), nil
 }
