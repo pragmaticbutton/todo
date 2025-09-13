@@ -5,6 +5,7 @@ import (
 	"todo/internal/service"
 	"todo/internal/storage/memory"
 	"todo/internal/task"
+	"todo/internal/utils"
 )
 
 func main() {
@@ -24,5 +25,9 @@ func main() {
 
 	percent, _ := svc.PercentDone()
 	println("Percent done:", percent)
+
+	svc.UpdateTask(3, service.UpdateTaskInput{Description: utils.Ptr("Novi description")})
+	t, _ := svc.GetTask(3)
+	fmt.Println(t)
 
 }
