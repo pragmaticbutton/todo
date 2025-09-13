@@ -10,7 +10,7 @@ type Memory struct {
 	ts map[uint32]*task.Task
 }
 
-var data *Memory
+var data *Memory // TODO: is singleton really needed here? Also, should this be protected by mutex or sync.Map?
 
 var once sync.Once
 

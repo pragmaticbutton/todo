@@ -16,8 +16,8 @@ func New(s storage.Storage) *Service {
 	}
 }
 
-func (s *Service) AddTask(desc string) (*task.Task, error) {
-	t := task.New(s.storage.NextID(), desc)
+func (s *Service) AddTask(desc string, pr task.Priority) (*task.Task, error) {
+	t := task.New(s.storage.NextID(), desc, pr)
 	err := s.storage.AddTask(t)
 	if err != nil {
 		return nil, err
