@@ -6,10 +6,10 @@ import (
 )
 
 type Service struct {
-	storage *storage.Storage
+	storage storage.Storage
 }
 
-func New(s *storage.Storage) *Service {
+func New(s storage.Storage) *Service {
 	return &Service{
 		storage: s,
 	}

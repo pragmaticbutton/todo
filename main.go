@@ -1,35 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"todo/internal/service"
-	"todo/internal/storage"
+	"todo/internal/storage/memory"
 )
 
 func main() {
-	data := storage.New()
-	svc := service.New(data)
-
-	t, err := svc.AddTask("first task")
-	if err != nil {
-		panic(err)
+	svc := service.New(memory.New())
+	svc.AddTask("Task 1")
+	svc.AddTask("Task 2")
+	tasks, _ := svc.ListTasks()
+	for _, t := range tasks {
+		println(t.ID, t.Description, t.Done)
 	}
-	fmt.Println(*t)
-
-	svc.CompleteTask(t.ID)
-
-	tasks, err := svc.ListTasks()
-	if err != nil {
-		panic(err)
+	svc.CompleteTask(2)
+	tasks, _ = svc.ListTasks()
+	for _, t := range tasks {
+		println(t.ID, t.Description, t.Done)
 	}
-	fmt.Println(tasks)
-
-	svc.ReopenTask(t.ID)
-
-	tasks, err = svc.ListTasks()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(tasks)
 
 }
