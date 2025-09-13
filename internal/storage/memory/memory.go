@@ -114,3 +114,15 @@ func (m *Memory) UpdateList(l *list.List) error {
 func (m *Memory) NextListID() uint32 {
 	return uint32(len(m.lists) + 1)
 }
+
+func (m *Memory) SearchTasks(listID *uint32) ([]task.Task, error) {
+	ts := []task.Task{}
+
+	for _, t := range m.tasks {
+		if listID != nil && t.ListID != nil && *t.ListID == *listID {
+			ts = append(ts, *t)
+		}
+	}
+
+	return ts, nil
+}

@@ -14,6 +14,7 @@ type Storage interface {
 	GetTask(id uint32) (*task.Task, error)
 	DeleteTask(id uint32) error
 	UpdateTask(t *task.Task) error
+	SearchTasks(listID *uint32) ([]task.Task, error)
 
 	// list methods
 	NextListID() uint32

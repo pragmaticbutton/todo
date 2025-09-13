@@ -5,7 +5,9 @@ package service
 import (
 	"time"
 	"todo/internal/domain/list"
+	"todo/internal/domain/task"
 	"todo/internal/storage"
+	"todo/internal/utils"
 )
 
 type ListService struct {
@@ -61,4 +63,12 @@ func (l *ListService) UpdateList(id uint32, input *UpdateListInput) error {
 		return err
 	}
 	return nil
+}
+
+func (l *ListService) ListTasks(id uint32) ([]task.Task, error) {
+	ts, err := l.storage.SearchTasks(utils.Ptr(id))
+	if err != nil {
+		return nil, err
+	}
+	return ts, nil
 }

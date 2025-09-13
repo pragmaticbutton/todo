@@ -12,18 +12,24 @@ func main() {
 	storage := memory.New()
 	listSvc := service.NewListService(storage)
 	listSvc.AddList(service.AddListInput{Description: "shopping"})
-	lists, _ := listSvc.ListLists()
-	for _, l := range lists {
-		fmt.Println(l)
-	}
+	// lists, _ := listSvc.ListLists()
+	// for _, l := range lists {
+	// 	fmt.Println(l)
+	// }
 
 	taskSvc := service.NewTaskService(storage)
-	_, err := taskSvc.AddTask(service.AddTaskInput{Description: "cookies", ListID: utils.Ptr(uint32(3)), Priority: task.PriorityMedium})
+	_, err := taskSvc.AddTask(service.AddTaskInput{Description: "cookies", ListID: utils.Ptr(uint32(1)), Priority: task.PriorityMedium})
 	if err != nil {
 		panic(err)
 	}
-	tasks, _ := taskSvc.ListTasks()
-	for _, t := range tasks {
-		fmt.Println(t)
+	// tasks, _ := taskSvc.ListTasks()
+	// for _, t := range tasks {
+	// 	fmt.Println(t)
+	// }
+	taskSvc.AddTask(service.AddTaskInput{Description: "nesto", ListID: utils.Ptr(uint32(1)), Priority: task.PriorityHigh})
+
+	ls, _ := listSvc.ListTasks(uint32(1))
+	for _, l := range ls {
+		fmt.Println(l.ID, *l.ListID)
 	}
 }
