@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"todo/internal/domain/list"
 	"todo/internal/domain/task"
 	"todo/internal/service"
 	"todo/internal/storage/memory"
@@ -9,7 +10,8 @@ import (
 )
 
 func main() {
-	svc := service.New(memory.New())
+	storage := memory.New()
+	svc := service.NewTaskService(storage)
 	svc.AddTask("Task 1", task.PriorityHigh)
 	svc.AddTask("Task 2", task.PriorityLow)
 	tasks, _ := svc.ListTasks()
@@ -30,4 +32,10 @@ func main() {
 	t, _ := svc.GetTask(3)
 	fmt.Println(t)
 
+	fmt.Println("-----------------------")
+	storage.AddList(&list.List{ID: 1, Description: "List 1"})
+	ls, _ := storage.ListLists()
+	for _, l := range ls {
+		fmt.Println(l)
+	}
 }

@@ -17,14 +17,14 @@ type UpdateTaskInput struct {
 	Done        *bool
 }
 
-func New(s storage.Storage) *TaskService {
+func NewTaskService(s storage.Storage) *TaskService {
 	return &TaskService{
 		storage: s,
 	}
 }
 
 func (s *TaskService) AddTask(desc string, pr task.Priority) (*task.Task, error) {
-	t := task.New(s.storage.NextID(), desc, pr)
+	t := task.New(s.storage.NextTaskID(), desc, pr)
 	err := s.storage.AddTask(t)
 	if err != nil {
 		return nil, err
