@@ -11,10 +11,17 @@ type TaskService struct {
 	storage storage.Storage
 }
 
+type AddTaskInput struct {
+	Description string
+	Priority    task.Priority
+	ListID      *uint32
+}
+
 type UpdateTaskInput struct {
 	Description *string
 	Priority    *task.Priority
 	Done        *bool
+	ListID      *uint32
 }
 
 func NewTaskService(s storage.Storage) *TaskService {
@@ -23,8 +30,14 @@ func NewTaskService(s storage.Storage) *TaskService {
 	}
 }
 
-func (s *TaskService) AddTask(desc string, pr task.Priority) (*task.Task, error) {
-	t := task.New(s.storage.NextTaskID(), desc, pr)
+func (s *TaskService) AddTask(input AddTaskInput) (*task.Task, error) {
+	if input.ListID != nil {
+		if err := s.checkListExists(*input.ListID); err != nil {
+			return nil, err
+		}
+	}
+
+	t := task.New(s.storage.NextTaskID(), input.Description, input.Priority, input.ListID)
 	err := s.storage.AddTask(t)
 	if err != nil {
 		return nil, err
@@ -92,10 +105,24 @@ func (s *TaskService) UpdateTask(id uint32, input UpdateTaskInput) (*task.Task, 
 	if input.Done != nil {
 		t.Done = *input.Done
 	}
+	if input.ListID != nil {
+		t.ListID = input.ListID
+	}
 	t.Updated = time.Now()
 	err = s.storage.UpdateTask(t)
 	if err != nil {
 		return nil, err
 	}
 	return t, nil
+}
+
+// TODO: fix this after errors are improved
+func (s *TaskService) checkListExists(id uint32) error {
+
+	_, err := s.storage.GetList(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
