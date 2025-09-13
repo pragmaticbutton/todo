@@ -1,6 +1,12 @@
 package service
 
-import "todo/internal/storage"
+// TODO: should this be in separate package?
+
+import (
+	"time"
+	"todo/internal/domain/list"
+	"todo/internal/storage"
+)
 
 type ListService struct {
 	storage storage.Storage
@@ -12,10 +18,47 @@ func NewListService(s storage.Storage) *ListService {
 	}
 }
 
-type CreateListInput struct {
+type AddListInput struct {
 	Description string
 }
 
-func (s *ListService) CreateList(input CreateListInput) error {
+type UpdateListInput struct {
+	Description *string
+}
+
+func (l *ListService) AddList(input AddListInput) error {
+	list := list.New(l.storage.NextListID(), input.Description)
+	err := l.storage.AddList(list)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *ListService) ListLists() ([]list.List, error) {
+	return l.storage.ListLists()
+}
+
+func (l *ListService) GetList(id uint32) (*list.List, error) {
+	return l.storage.GetList(id)
+}
+
+func (l *ListService) DeleteList(id uint32) error {
+	return l.storage.DeleteList(id)
+}
+
+func (l *ListService) UpdateList(id uint32, input *UpdateListInput) error {
+	list, err := l.storage.GetList(id)
+	if err != nil {
+		return err
+	}
+	if input.Description != nil {
+		list.Description = *input.Description
+	}
+	list.Updated = time.Now()
+	err = l.storage.UpdateList(list)
+	if err != nil {
+		return err
+	}
 	return nil
 }
