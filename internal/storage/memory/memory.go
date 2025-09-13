@@ -3,7 +3,7 @@ package memory
 import (
 	"fmt"
 	"sync"
-	"todo/internal/task"
+	"todo/internal/domain/task"
 )
 
 type Memory struct {

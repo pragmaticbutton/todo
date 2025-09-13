@@ -2,12 +2,12 @@ package service
 
 import (
 	"time"
+	"todo/internal/domain/task"
 	"todo/internal/storage"
-	"todo/internal/task"
 	"todo/internal/utils"
 )
 
-type Service struct {
+type TaskService struct {
 	storage storage.Storage
 }
 
@@ -17,13 +17,13 @@ type UpdateTaskInput struct {
 	Done        *bool
 }
 
-func New(s storage.Storage) *Service {
-	return &Service{
+func New(s storage.Storage) *TaskService {
+	return &TaskService{
 		storage: s,
 	}
 }
 
-func (s *Service) AddTask(desc string, pr task.Priority) (*task.Task, error) {
+func (s *TaskService) AddTask(desc string, pr task.Priority) (*task.Task, error) {
 	t := task.New(s.storage.NextID(), desc, pr)
 	err := s.storage.AddTask(t)
 	if err != nil {
@@ -32,19 +32,19 @@ func (s *Service) AddTask(desc string, pr task.Priority) (*task.Task, error) {
 	return t, nil
 }
 
-func (s *Service) ListTasks() ([]task.Task, error) {
+func (s *TaskService) ListTasks() ([]task.Task, error) {
 	return s.storage.ListTasks()
 }
 
-func (s *Service) GetTask(id uint32) (*task.Task, error) {
+func (s *TaskService) GetTask(id uint32) (*task.Task, error) {
 	return s.storage.GetTask(id)
 }
 
-func (s *Service) DeleteTask(id uint32) error {
+func (s *TaskService) DeleteTask(id uint32) error {
 	return s.storage.DeleteTask(id)
 }
 
-func (s *Service) CompleteTask(id uint32) error {
+func (s *TaskService) CompleteTask(id uint32) error {
 	_, err := s.UpdateTask(id, UpdateTaskInput{Done: utils.Ptr(true)})
 	if err != nil {
 		return err
@@ -52,7 +52,7 @@ func (s *Service) CompleteTask(id uint32) error {
 	return nil
 }
 
-func (s *Service) ReopenTask(id uint32) error {
+func (s *TaskService) ReopenTask(id uint32) error {
 	_, err := s.UpdateTask(id, UpdateTaskInput{Done: utils.Ptr(false)})
 	if err != nil {
 		return err
@@ -60,7 +60,7 @@ func (s *Service) ReopenTask(id uint32) error {
 	return nil
 }
 
-func (s *Service) PercentDone() (uint8, error) { // TODO: what type should be returned here?
+func (s *TaskService) PercentDone() (uint8, error) { // TODO: what type should be returned here?
 	tasks, err := s.storage.ListTasks()
 	if err != nil {
 		return 0, err
@@ -78,7 +78,7 @@ func (s *Service) PercentDone() (uint8, error) { // TODO: what type should be re
 	return uint8((doneCount * 100) / len(tasks)), nil
 }
 
-func (s *Service) UpdateTask(id uint32, input UpdateTaskInput) (*task.Task, error) {
+func (s *TaskService) UpdateTask(id uint32, input UpdateTaskInput) (*task.Task, error) {
 	t, err := s.storage.GetTask(id)
 	if err != nil {
 		return nil, err

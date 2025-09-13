@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"todo/internal/domain/task"
 	"todo/internal/service"
 	"todo/internal/storage/memory"
-	"todo/internal/task"
 	"todo/internal/utils"
 )
 

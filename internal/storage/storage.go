@@ -1,6 +1,6 @@
 package storage
 
-import "todo/internal/task"
+import "todo/internal/domain/task"
 
 type Storage interface {
 	NextID() uint32
