@@ -21,15 +21,17 @@ func NewListService(s storage.Storage) *ListService {
 }
 
 type AddListInput struct {
+	Name        string
 	Description string
 }
 
 type UpdateListInput struct {
+	Name        *string
 	Description *string
 }
 
 func (l *ListService) AddList(input AddListInput) error {
-	list := list.New(l.storage.NextListID(), input.Description)
+	list := list.New(l.storage.NextListID(), input.Name, input.Description)
 	err := l.storage.AddList(list)
 	if err != nil {
 		return err
@@ -53,6 +55,9 @@ func (l *ListService) UpdateList(id uint32, input *UpdateListInput) error {
 	list, err := l.storage.GetList(id)
 	if err != nil {
 		return err
+	}
+	if input.Name != nil {
+		list.Name = *input.Name
 	}
 	if input.Description != nil {
 		list.Description = *input.Description
