@@ -4,7 +4,9 @@
 - [ ] Fix concurrency issues in memory
 - [ ] Check if singleton is needed
 - [ ] Add code checks, like lint, vet...
+  - [x] Added lint in Makefile
 - [ ] Add CI checks
+  - [x] Added quality checks workflow
 - [ ] Error handling
 - [ ] Logging
 - [ ] What int types to use for ids and other fields?
