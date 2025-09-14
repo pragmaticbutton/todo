@@ -2,6 +2,7 @@
 
 - [ ] Add tests
 - [ ] Fix concurrency issues in memory
+  - [ ] Protect shared maps
 - [ ] Check if singleton is needed
 - [ ] Add code checks, like lint, vet...
   - [x] Added lint in Makefile
