@@ -1,3 +1,22 @@
 # TODOs
 
-- [ ] Add tests
+- [] Add tests
+- [] Fix concurrency issues in memory
+- [] Check if singleton is needed
+- [] Add code checks, like lint, vet...
+- [] Add CI checks
+- [] Error handling
+- [] Logging
+- [] What int types to use for ids and other fields?
+- [] Sorting, pagination
+- [] Enable dependabot
+- [] Add codeowners
+- [] Check how to handle optional fields/values
+- [] Expose service using rest/gprc... API
+- [] Check project structure
+- [] Where to validate input parameters and where to define rules for input parameters?
+- [] Where to define output parameters?
+- [] Add possibility to use this as CLI tool
+- [] Explore and add other storage options like database, redis, file...
+- [] Consider creating a frontend application that uses this
+- [] Documentation
