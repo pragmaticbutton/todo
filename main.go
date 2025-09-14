@@ -11,14 +11,17 @@ import (
 func main() {
 	storage := memory.New()
 	listSvc := service.NewListService(storage)
-	listSvc.AddList(service.AddListInput{Description: "shopping"})
+	err := listSvc.AddList(service.AddListInput{Description: "shopping"})
+	if err != nil {
+		panic(err)
+	}
 	// lists, _ := listSvc.ListLists()
 	// for _, l := range lists {
 	// 	fmt.Println(l)
 	// }
 
 	taskSvc := service.NewTaskService(storage)
-	_, err := taskSvc.AddTask(service.AddTaskInput{Description: "cookies", ListID: utils.Ptr(uint32(1)), Priority: task.PriorityMedium})
+	_, err = taskSvc.AddTask(service.AddTaskInput{Description: "cookies", ListID: utils.Ptr(uint32(1)), Priority: task.PriorityMedium})
 	if err != nil {
 		panic(err)
 	}
@@ -26,7 +29,10 @@ func main() {
 	// for _, t := range tasks {
 	// 	fmt.Println(t)
 	// }
-	taskSvc.AddTask(service.AddTaskInput{Description: "nesto", ListID: utils.Ptr(uint32(1)), Priority: task.PriorityHigh})
+	_, err = taskSvc.AddTask(service.AddTaskInput{Description: "nesto", ListID: utils.Ptr(uint32(1)), Priority: task.PriorityHigh})
+	if err != nil {
+		panic(err)
+	}
 
 	ls, _ := listSvc.ListTasks(uint32(1))
 	for _, l := range ls {
