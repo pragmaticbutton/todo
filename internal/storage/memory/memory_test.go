@@ -277,3 +277,31 @@ func TestAddList(t *testing.T) {
 		assert.Equal(t, first, *got)
 	})
 }
+
+func TestListLists(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		list, err := mem.ListLists()
+		require.NoError(t, err)
+		assert.Len(t, list, 0)
+	})
+
+	t.Run("multiple", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		lists := []list.List{
+			{ID: 1, Description: "list one", Created: time.Now()},
+			{ID: 2, Description: "list two", Created: time.Now()},
+			{ID: 3, Description: "list three", Created: time.Now()},
+		}
+		for _, v := range lists {
+			ls := v
+			require.NoError(t, mem.AddList(&ls))
+		}
+
+		list, err := mem.ListLists()
+		require.NoError(t, err)
+		assert.Len(t, list, len(lists))
+	})
+}
