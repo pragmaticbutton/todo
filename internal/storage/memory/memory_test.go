@@ -83,3 +83,24 @@ func TestAddTask(t *testing.T) {
 		assert.Equal(t, first, *got)
 	})
 }
+
+func TestGetTask(t *testing.T) {
+
+	t.Run("success", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		task := task.Task{ID: 1, Description: "one", Priority: task.PriorityLow, Created: time.Now()}
+		require.NoError(t, mem.AddTask(&task))
+
+		got, err := mem.GetTask(task.ID)
+		require.NoError(t, err)
+		assert.Equal(t, task, *got)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		_, err := mem.GetTask(666)
+		require.Error(t, err)
+	})
+}
