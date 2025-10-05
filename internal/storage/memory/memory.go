@@ -76,6 +76,9 @@ func (m *memory) NextTaskID() uint32 {
 }
 
 func (m *memory) AddList(l *list.List) error {
+	if _, ok := m.lists[l.ID]; ok {
+		return fmt.Errorf("list with id %d already exists", l.ID)
+	}
 	m.lists[l.ID] = l
 	return nil
 }

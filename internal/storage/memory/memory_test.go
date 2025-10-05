@@ -3,6 +3,7 @@ package memory
 import (
 	"testing"
 	"time"
+	"todo/internal/domain/list"
 	"todo/internal/domain/task"
 
 	"github.com/stretchr/testify/assert"
@@ -20,7 +21,7 @@ func TestNew(t *testing.T) {
 func TestAddTask(t *testing.T) {
 	fixed := time.Date(2025, 10, 5, 0, 0, 0, 0, time.UTC)
 
-	t.Run("single_success", func(t *testing.T) {
+	t.Run("success, single", func(t *testing.T) {
 		resetForTest()
 		mem := New()
 
@@ -36,7 +37,7 @@ func TestAddTask(t *testing.T) {
 		assert.Len(t, list, 1)
 	})
 
-	t.Run("multiple_success", func(t *testing.T) {
+	t.Run("success, multiple", func(t *testing.T) {
 		resetForTest()
 		mem := New()
 
@@ -62,7 +63,7 @@ func TestAddTask(t *testing.T) {
 		}
 	})
 
-	t.Run("duplicate_id_error", func(t *testing.T) {
+	t.Run("duplicate id error", func(t *testing.T) {
 		resetForTest()
 		mem := New()
 
@@ -198,7 +199,7 @@ func TestNextTaskID(t *testing.T) {
 		}
 	})
 
-	t.Run("after_deletion", func(t *testing.T) {
+	t.Run("after deletion", func(t *testing.T) {
 		resetForTest()
 		mem := New()
 		for i := 1; i <= 3; i++ {
@@ -209,5 +210,70 @@ func TestNextTaskID(t *testing.T) {
 
 		nextID := mem.NextTaskID()
 		assert.Equal(t, uint32(3), nextID) // still 3, since we had 3 tasks added
+	})
+}
+
+func TestAddList(t *testing.T) {
+	t.Run("success, single", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+
+		in := list.List{ID: 1, Description: "my list", Created: time.Now()}
+		require.NoError(t, mem.AddList(&in))
+
+		got, err := mem.GetList(in.ID)
+		require.NoError(t, err)
+		assert.Equal(t, in, *got)
+
+		list, err := mem.ListLists()
+		require.NoError(t, err)
+		assert.Len(t, list, 1)
+	})
+
+	t.Run("success, multiple", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+
+		inputs := []list.List{
+			{ID: 1, Description: "list one", Created: time.Now()},
+			{ID: 2, Description: "list two", Created: time.Now()},
+			{ID: 3, Description: "list three", Created: time.Now()},
+		}
+
+		for _, v := range inputs {
+			ls := v
+			require.NoError(t, mem.AddList(&ls))
+		}
+
+		list, err := mem.ListLists()
+		require.NoError(t, err)
+		assert.Len(t, list, len(inputs))
+
+		for _, v := range inputs {
+			got, err := mem.GetList(v.ID)
+			require.NoError(t, err)
+			assert.Equal(t, v, *got)
+		}
+	})
+
+	t.Run("duplicate id error", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+
+		first := list.List{ID: 1, Description: "orig", Created: time.Now()}
+		dup := list.List{ID: 1, Description: "dup", Created: time.Now()}
+
+		require.NoError(t, mem.AddList(&first)) // first add OK
+
+		err := mem.AddList(&dup) // second add must fail
+		require.Error(t, err)
+
+		list, err := mem.ListLists()
+		require.NoError(t, err)
+		assert.Len(t, list, 1)
+
+		got, err := mem.GetList(first.ID)
+		require.NoError(t, err)
+		assert.Equal(t, first, *got)
 	})
 }
