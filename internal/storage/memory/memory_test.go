@@ -325,3 +325,28 @@ func TestGetList(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestDeleteList(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		lst := list.List{ID: 1, Description: "my list", Created: time.Now()}
+		require.NoError(t, mem.AddList(&lst))
+
+		err := mem.DeleteList(lst.ID)
+		require.NoError(t, err)
+		_, err = mem.GetList(lst.ID)
+		require.Error(t, err)
+
+		list, err := mem.ListLists()
+		require.NoError(t, err)
+		assert.Len(t, list, 0)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		err := mem.DeleteList(666)
+		require.Error(t, err)
+	})
+}
