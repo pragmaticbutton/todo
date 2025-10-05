@@ -130,3 +130,31 @@ func TestDeleteTask(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestListTasks(t *testing.T) {
+	t.Run("empty", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		list, err := mem.ListTasks()
+		require.NoError(t, err)
+		assert.Len(t, list, 0)
+	})
+
+	t.Run("multiple", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		tasks := []task.Task{
+			{ID: 1, Description: "one", Priority: task.PriorityLow, Created: time.Now()},
+			{ID: 2, Description: "two", Priority: task.PriorityMedium, Created: time.Now()},
+			{ID: 3, Description: "three", Priority: task.PriorityHigh, Created: time.Now()},
+		}
+		for _, v := range tasks {
+			tsk := v
+			require.NoError(t, mem.AddTask(&tsk))
+		}
+
+		list, err := mem.ListTasks()
+		require.NoError(t, err)
+		assert.Len(t, list, len(tasks))
+	})
+}
