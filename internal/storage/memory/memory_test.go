@@ -376,3 +376,29 @@ func TestUpdateList(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestNextListID(t *testing.T) {
+	t.Run("sequential", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		for i := 1; i <= 5; i++ {
+			nextID := mem.NextListID()
+			assert.Equal(t, uint32(i), nextID)
+			lst := list.List{ID: nextID, Description: "list", Created: time.Now()}
+			require.NoError(t, mem.AddList(&lst))
+		}
+	})
+
+	t.Run("after deletion", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		for i := 1; i <= 3; i++ {
+			lst := list.List{ID: uint32(i), Description: "list", Created: time.Now()}
+			require.NoError(t, mem.AddList(&lst))
+		}
+		require.NoError(t, mem.DeleteList(2))
+
+		nextID := mem.NextListID()
+		assert.Equal(t, uint32(3), nextID) // still 3, since we had 3 lists added
+	})
+}
