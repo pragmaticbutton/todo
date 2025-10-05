@@ -305,3 +305,23 @@ func TestListLists(t *testing.T) {
 		assert.Len(t, list, len(lists))
 	})
 }
+
+func TestGetList(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		lst := list.List{ID: 1, Description: "my list", Created: time.Now()}
+		require.NoError(t, mem.AddList(&lst))
+
+		got, err := mem.GetList(lst.ID)
+		require.NoError(t, err)
+		assert.Equal(t, lst, *got)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		_, err := mem.GetList(666)
+		require.Error(t, err)
+	})
+}
