@@ -158,3 +158,30 @@ func TestListTasks(t *testing.T) {
 		assert.Len(t, list, len(tasks))
 	})
 }
+
+func TestUpdate(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		orig := task.Task{ID: 1, Description: "one", Priority: task.PriorityLow, Created: time.Now()}
+		updated := task.Task{ID: 1, Description: "updated", Priority: task.PriorityHigh, Created: orig.Created}
+
+		require.NoError(t, mem.AddTask(&orig))
+
+		err := mem.UpdateTask(&updated)
+		require.NoError(t, err)
+
+		got, err := mem.GetTask(orig.ID)
+		require.NoError(t, err)
+		assert.Equal(t, updated, *got)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		nonexistent := task.Task{ID: 666, Description: "nope", Priority: task.PriorityLow, Created: time.Now()}
+
+		err := mem.UpdateTask(&nonexistent)
+		require.Error(t, err)
+	})
+}
