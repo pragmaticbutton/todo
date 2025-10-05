@@ -160,7 +160,7 @@ func TestListTasks(t *testing.T) {
 	})
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateTask(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		resetForTest()
 		mem := New()
@@ -184,6 +184,47 @@ func TestUpdate(t *testing.T) {
 
 		err := mem.UpdateTask(&nonexistent)
 		require.Error(t, err)
+	})
+}
+
+func TestSearchTasks(t *testing.T) {
+	t.Run("success, found", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+
+		// create list
+		lst := list.List{ID: 1, Description: "my list", Created: time.Now()}
+		err := mem.AddList(&lst)
+		require.NoError(t, err)
+
+		// add task in that list
+		task := task.Task{ID: 1, Description: "eat", ListID: &lst.ID, Priority: task.PriorityLow, Created: time.Now()}
+		require.NoError(t, mem.AddTask(&task))
+
+		results, err := mem.SearchTasks(&lst.ID)
+		require.NoError(t, err)
+		assert.Len(t, results, 1)
+		assert.Equal(t, task, results[0])
+	})
+
+	t.Run("success, not found", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+
+		// create list
+		lst := list.List{ID: 1, Description: "my list", Created: time.Now()}
+		err := mem.AddList(&lst)
+		require.NoError(t, err)
+
+		// add task in that list
+		task := task.Task{ID: 1, Description: "eat", ListID: &lst.ID, Priority: task.PriorityLow, Created: time.Now()}
+		require.NoError(t, mem.AddTask(&task))
+
+		// search in a different list
+		otherListID := uint32(999)
+		results, err := mem.SearchTasks(&otherListID)
+		require.NoError(t, err)
+		assert.Len(t, results, 0)
 	})
 }
 

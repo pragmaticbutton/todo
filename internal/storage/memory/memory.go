@@ -75,6 +75,18 @@ func (m *memory) NextTaskID() uint32 {
 	return uint32(len(m.tasks) + 1)
 }
 
+func (m *memory) SearchTasks(listID *uint32) ([]task.Task, error) {
+	ts := []task.Task{}
+
+	for _, t := range m.tasks {
+		if listID != nil && t.ListID != nil && *t.ListID == *listID {
+			ts = append(ts, *t)
+		}
+	}
+
+	return ts, nil
+}
+
 func (m *memory) AddList(l *list.List) error {
 	if _, ok := m.lists[l.ID]; ok {
 		return fmt.Errorf("list with id %d already exists", l.ID)
@@ -119,18 +131,6 @@ func (m *memory) UpdateList(l *list.List) error {
 
 func (m *memory) NextListID() uint32 {
 	return uint32(len(m.lists) + 1)
-}
-
-func (m *memory) SearchTasks(listID *uint32) ([]task.Task, error) {
-	ts := []task.Task{}
-
-	for _, t := range m.tasks {
-		if listID != nil && t.ListID != nil && *t.ListID == *listID {
-			ts = append(ts, *t)
-		}
-	}
-
-	return ts, nil
 }
 
 func resetForTest() {
