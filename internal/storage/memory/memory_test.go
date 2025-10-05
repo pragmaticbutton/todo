@@ -104,3 +104,29 @@ func TestGetTask(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestDeleteTask(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		task := task.Task{ID: 1, Description: "one", Priority: task.PriorityLow, Created: time.Now()}
+		require.NoError(t, mem.AddTask(&task))
+
+		err := mem.DeleteTask(task.ID)
+		require.NoError(t, err)
+
+		_, err = mem.GetTask(task.ID)
+		require.Error(t, err)
+
+		list, err := mem.ListTasks()
+		require.NoError(t, err)
+		assert.Len(t, list, 0)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		err := mem.DeleteTask(666)
+		require.Error(t, err)
+	})
+}
