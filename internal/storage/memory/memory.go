@@ -30,6 +30,9 @@ func New() *memory {
 }
 
 func (m *memory) AddTask(t *task.Task) error {
+	if _, ok := m.tasks[t.ID]; ok {
+		return fmt.Errorf("task with id %d already exists", t.ID)
+	}
 	m.tasks[t.ID] = t
 	return nil
 }
@@ -125,4 +128,9 @@ func (m *memory) SearchTasks(listID *uint32) ([]task.Task, error) {
 	}
 
 	return ts, nil
+}
+
+func resetForTest() {
+	data = nil
+	once = sync.Once{}
 }
