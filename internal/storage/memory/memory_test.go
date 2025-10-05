@@ -185,3 +185,29 @@ func TestUpdate(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestNextTaskID(t *testing.T) {
+	t.Run("sequential", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		for i := 1; i <= 5; i++ {
+			nextID := mem.NextTaskID()
+			assert.Equal(t, uint32(i), nextID)
+			task := task.Task{ID: nextID, Description: "task", Priority: task.PriorityLow, Created: time.Now()}
+			require.NoError(t, mem.AddTask(&task))
+		}
+	})
+
+	t.Run("after_deletion", func(t *testing.T) {
+		resetForTest()
+		mem := New()
+		for i := 1; i <= 3; i++ {
+			task := task.Task{ID: uint32(i), Description: "task", Priority: task.PriorityLow, Created: time.Now()}
+			require.NoError(t, mem.AddTask(&task))
+		}
+		require.NoError(t, mem.DeleteTask(2))
+
+		nextID := mem.NextTaskID()
+		assert.Equal(t, uint32(3), nextID) // still 3, since we had 3 tasks added
+	})
+}
