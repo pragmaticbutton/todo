@@ -10,7 +10,7 @@ import (
 
 func main() {
 	storage := memory.New()
-	listSvc := service.NewListService(storage)
+	listSvc := service.NewListService(storage, storage)
 	err := listSvc.AddList(service.AddListInput{Description: "shopping"})
 	if err != nil {
 		panic(err)
@@ -20,7 +20,7 @@ func main() {
 	// 	fmt.Println(l)
 	// }
 
-	taskSvc := service.NewTaskService(storage)
+	taskSvc := service.NewTaskService(storage, storage)
 	_, err = taskSvc.AddTask(service.AddTaskInput{Description: "cookies", ListID: utils.Ptr(uint32(1)), Priority: task.PriorityMedium})
 	if err != nil {
 		panic(err)

@@ -8,7 +8,8 @@ import (
 )
 
 type TaskService struct {
-	storage storage.Storage
+	taskStorage storage.TaskStorage
+	listStorage storage.ListStorage
 }
 
 type AddTaskInput struct {
@@ -24,9 +25,10 @@ type UpdateTaskInput struct {
 	ListID      *uint32
 }
 
-func NewTaskService(s storage.Storage) *TaskService {
+func NewTaskService(ts storage.TaskStorage, ls storage.ListStorage) *TaskService {
 	return &TaskService{
-		storage: s,
+		taskStorage: ts,
+		listStorage: ls,
 	}
 }
 
@@ -37,8 +39,8 @@ func (s *TaskService) AddTask(input AddTaskInput) (*task.Task, error) {
 		}
 	}
 
-	t := task.New(s.storage.NextTaskID(), input.Description, input.Priority, input.ListID)
-	err := s.storage.AddTask(t)
+	t := task.New(s.taskStorage.NextTaskID(), input.Description, input.Priority, input.ListID)
+	err := s.taskStorage.AddTask(t)
 	if err != nil {
 		return nil, err
 	}
@@ -46,15 +48,15 @@ func (s *TaskService) AddTask(input AddTaskInput) (*task.Task, error) {
 }
 
 func (s *TaskService) ListTasks() ([]task.Task, error) {
-	return s.storage.ListTasks()
+	return s.taskStorage.ListTasks()
 }
 
 func (s *TaskService) GetTask(id uint32) (*task.Task, error) {
-	return s.storage.GetTask(id)
+	return s.taskStorage.GetTask(id)
 }
 
 func (s *TaskService) DeleteTask(id uint32) error {
-	return s.storage.DeleteTask(id)
+	return s.taskStorage.DeleteTask(id)
 }
 
 func (s *TaskService) CompleteTask(id uint32) error {
@@ -74,7 +76,7 @@ func (s *TaskService) ReopenTask(id uint32) error {
 }
 
 func (s *TaskService) PercentDone() (uint8, error) { // TODO: what type should be returned here?
-	tasks, err := s.storage.ListTasks()
+	tasks, err := s.taskStorage.ListTasks()
 	if err != nil {
 		return 0, err
 	}
@@ -92,7 +94,7 @@ func (s *TaskService) PercentDone() (uint8, error) { // TODO: what type should b
 }
 
 func (s *TaskService) UpdateTask(id uint32, input UpdateTaskInput) (*task.Task, error) {
-	t, err := s.storage.GetTask(id)
+	t, err := s.taskStorage.GetTask(id)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +111,7 @@ func (s *TaskService) UpdateTask(id uint32, input UpdateTaskInput) (*task.Task, 
 		t.ListID = input.ListID
 	}
 	t.Updated = time.Now()
-	err = s.storage.UpdateTask(t)
+	err = s.taskStorage.UpdateTask(t)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +121,7 @@ func (s *TaskService) UpdateTask(id uint32, input UpdateTaskInput) (*task.Task, 
 // TODO: fix this after errors are improved
 func (s *TaskService) checkListExists(id uint32) error {
 
-	_, err := s.storage.GetList(id)
+	_, err := s.listStorage.GetList(id)
 	if err != nil {
 		return err
 	}

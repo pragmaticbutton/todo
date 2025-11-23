@@ -5,9 +5,7 @@ import (
 	"todo/internal/domain/task"
 )
 
-// TODO: should we separate task and list storage interfaces?
-type Storage interface {
-	// task methods
+type TaskStorage interface {
 	NextTaskID() uint32
 	AddTask(t *task.Task) error
 	ListTasks() ([]task.Task, error)
@@ -15,12 +13,18 @@ type Storage interface {
 	DeleteTask(id uint32) error
 	UpdateTask(t *task.Task) error
 	SearchTasks(listID *uint32) ([]task.Task, error)
+}
 
-	// list methods
+type ListStorage interface {
 	NextListID() uint32
 	AddList(l *list.List) error
 	ListLists() ([]list.List, error)
 	GetList(id uint32) (*list.List, error)
 	DeleteList(id uint32) error
 	UpdateList(l *list.List) error
+}
+
+type Storage interface {
+	TaskStorage
+	ListStorage
 }
