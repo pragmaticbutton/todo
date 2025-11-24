@@ -16,7 +16,7 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, PriorityMedium, task.Priority)
 	assert.Equal(t, utils.Ptr(uint32(1)), task.ListID)
 	assert.False(t, task.Created.IsZero())
-	assert.True(t, task.Updated.IsZero())
+	assert.Nil(t, task.Updated)
 	assert.False(t, task.Done)
 
 }

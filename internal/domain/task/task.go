@@ -16,9 +16,9 @@ type Task struct {
 	Description string
 	Done        bool
 	Priority    Priority
-	ListID      *uint32 // TODO: what about optional fields?
+	ListID      *uint32
 	Created     time.Time
-	Updated     time.Time // TODO: what about nil time?
+	Updated     *time.Time
 }
 
 func New(id uint32, desc string, pr Priority, lID *uint32) *Task {
@@ -28,6 +28,5 @@ func New(id uint32, desc string, pr Priority, lID *uint32) *Task {
 		Priority:    pr,
 		ListID:      lID,
 		Created:     time.Now(),
-		Updated:     time.Time{}, // TODO: what about nil time?
 	}
 }

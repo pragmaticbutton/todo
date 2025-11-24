@@ -7,7 +7,7 @@ type List struct {
 	Name        string
 	Description string
 	Created     time.Time
-	Updated     time.Time // TODO: what about nil time?
+	Updated     *time.Time
 }
 
 func New(id uint32, name, desc string) *List {
@@ -16,6 +16,5 @@ func New(id uint32, name, desc string) *List {
 		Name:        name,
 		Description: desc,
 		Created:     time.Now(),
-		Updated:     time.Time{}, // TODO: what about nil time?
 	}
 }

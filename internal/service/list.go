@@ -64,7 +64,7 @@ func (l *ListService) UpdateList(id uint32, input *UpdateListInput) error {
 	if input.Description != nil {
 		list.Description = *input.Description
 	}
-	list.Updated = time.Now()
+	list.Updated = utils.Ptr(time.Now())
 	err = l.listStorage.UpdateList(list)
 	if err != nil {
 		return err

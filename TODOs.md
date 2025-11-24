@@ -14,7 +14,7 @@
 - [ ] Sorting, pagination
 - [ ] Enable dependabot
 - [ ] Add codeowners
-- [ ] Check how to handle optional fields/values
+- [x] Check how to handle optional fields/values
 - [ ] Expose service using rest/gprc... API
 - [ ] Check project structure
 - [ ] Where to validate input parameters and where to define rules for input parameters?
