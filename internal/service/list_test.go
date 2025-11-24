@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"testing"
-	"time"
 	"todo/internal/domain/list"
 	"todo/internal/domain/task"
 	"todo/internal/utils"
@@ -125,7 +124,7 @@ func TestUpdateList(t *testing.T) {
 			Name:        "shopping",
 			Description: "old desc",
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockListStorage, _ := newListServiceWithMocks()
@@ -134,7 +133,7 @@ func TestUpdateList(t *testing.T) {
 			return l.ID == 1 &&
 				l.Name == "groceries" &&
 				l.Description == "new desc" &&
-				!l.Updated.IsZero()
+				l.Updated != nil && !l.Updated.IsZero()
 		})).Return(nil)
 
 		err := svc.UpdateList(1, &UpdateListInput{
@@ -152,7 +151,7 @@ func TestUpdateList(t *testing.T) {
 			Name:        "shopping",
 			Description: "original desc",
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockListStorage, _ := newListServiceWithMocks()
@@ -173,7 +172,7 @@ func TestUpdateList(t *testing.T) {
 			Name:        "shopping",
 			Description: "old desc",
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockListStorage, _ := newListServiceWithMocks()
@@ -193,13 +192,13 @@ func TestUpdateList(t *testing.T) {
 			ID:      1,
 			Name:    "shopping",
 			Created: fixedTimestamp,
-			Updated: time.Time{}, // Zero value - not yet updated
+			Updated: nil, // Zero value - not yet updated
 		}
 
 		svc, mockListStorage, _ := newListServiceWithMocks()
 		mockListStorage.On("GetList", uint32(1)).Return(existingList, nil)
 		mockListStorage.On("UpdateList", mock.MatchedBy(func(l *list.List) bool {
-			return !l.Updated.IsZero() && l.Updated.After(fixedTimestamp)
+			return l.Updated != nil && !l.Updated.IsZero() && l.Updated.After(fixedTimestamp)
 		})).Return(nil)
 
 		err := svc.UpdateList(1, &UpdateListInput{Name: utils.Ptr("new")})

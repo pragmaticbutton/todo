@@ -15,5 +15,5 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, "shopping", l.Name)
 	assert.Equal(t, "grocery shopping list", l.Description)
 	assert.False(t, l.Created.IsZero())
-	assert.True(t, l.Updated.IsZero())
+	assert.Nil(t, l.Updated)
 }

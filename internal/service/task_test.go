@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"testing"
-	"time"
 	"todo/internal/domain/list"
 	"todo/internal/domain/task"
 	"todo/internal/utils"
@@ -193,13 +192,13 @@ func TestCompleteTask(t *testing.T) {
 			Priority:    task.PriorityHigh,
 			Done:        false,
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockTaskStorage, _ := newTaskServiceWithMocks()
 		mockTaskStorage.On("GetTask", uint32(1)).Return(existingTask, nil)
 		mockTaskStorage.On("UpdateTask", mock.MatchedBy(func(tk *task.Task) bool {
-			return tk.ID == 1 && tk.Done && !tk.Updated.IsZero()
+			return tk.ID == 1 && tk.Done && tk.Updated != nil && !tk.Updated.IsZero()
 		})).Return(nil)
 
 		err := svc.CompleteTask(1)
@@ -246,13 +245,13 @@ func TestReopenTask(t *testing.T) {
 			Priority:    task.PriorityHigh,
 			Done:        true,
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockTaskStorage, _ := newTaskServiceWithMocks()
 		mockTaskStorage.On("GetTask", uint32(1)).Return(existingTask, nil)
 		mockTaskStorage.On("UpdateTask", mock.MatchedBy(func(tk *task.Task) bool {
-			return tk.ID == 1 && !tk.Done && !tk.Updated.IsZero()
+			return tk.ID == 1 && !tk.Done && tk.Updated != nil && !tk.Updated.IsZero()
 		})).Return(nil)
 
 		err := svc.ReopenTask(1)
@@ -299,7 +298,7 @@ func TestUpdateTask(t *testing.T) {
 			Priority:    task.PriorityLow,
 			Done:        false,
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockTaskStorage, _ := newTaskServiceWithMocks()
@@ -309,7 +308,7 @@ func TestUpdateTask(t *testing.T) {
 				tk.Description == "new description" &&
 				tk.Priority == task.PriorityHigh &&
 				tk.Done &&
-				!tk.Updated.IsZero()
+				tk.Updated != nil && !tk.Updated.IsZero()
 		})).Return(nil)
 
 		result, err := svc.UpdateTask(1, UpdateTaskInput{
@@ -333,7 +332,7 @@ func TestUpdateTask(t *testing.T) {
 			Priority:    task.PriorityLow,
 			Done:        false,
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockTaskStorage, _ := newTaskServiceWithMocks()
@@ -363,7 +362,7 @@ func TestUpdateTask(t *testing.T) {
 			Priority:    task.PriorityLow,
 			Done:        false,
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockTaskStorage, _ := newTaskServiceWithMocks()
@@ -392,7 +391,7 @@ func TestUpdateTask(t *testing.T) {
 			Priority:    task.PriorityMedium,
 			Done:        false,
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockTaskStorage, _ := newTaskServiceWithMocks()
@@ -422,7 +421,7 @@ func TestUpdateTask(t *testing.T) {
 			Done:        false,
 			ListID:      utils.Ptr(uint32(1)),
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockTaskStorage, _ := newTaskServiceWithMocks()
@@ -446,13 +445,13 @@ func TestUpdateTask(t *testing.T) {
 			ID:          1,
 			Description: "description",
 			Created:     fixedTimestamp,
-			Updated:     time.Time{},
+			Updated:     nil,
 		}
 
 		svc, mockTaskStorage, _ := newTaskServiceWithMocks()
 		mockTaskStorage.On("GetTask", uint32(1)).Return(existingTask, nil)
 		mockTaskStorage.On("UpdateTask", mock.MatchedBy(func(tk *task.Task) bool {
-			return !tk.Updated.IsZero() && tk.Updated.After(fixedTimestamp)
+			return tk.Updated != nil && !tk.Updated.IsZero() && tk.Updated.After(fixedTimestamp)
 		})).Return(nil)
 
 		result, err := svc.UpdateTask(1, UpdateTaskInput{
@@ -461,6 +460,7 @@ func TestUpdateTask(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
+		assert.NotNil(t, result.Updated)
 		assert.False(t, result.Updated.IsZero())
 		mockTaskStorage.AssertExpectations(t)
 	})

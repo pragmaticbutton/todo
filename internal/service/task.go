@@ -110,7 +110,7 @@ func (s *TaskService) UpdateTask(id uint32, input UpdateTaskInput) (*task.Task, 
 	if input.ListID != nil {
 		t.ListID = input.ListID
 	}
-	t.Updated = time.Now()
+	t.Updated = utils.Ptr(time.Now())
 	err = s.taskStorage.UpdateTask(t)
 	if err != nil {
 		return nil, err
