@@ -1,6 +1,6 @@
 # TODOs
 
-- [ ] Add tests
+- [x] Add tests
 - [ ] Fix concurrency issues in memory
   - [ ] Protect shared maps
 - [ ] Check if singleton is needed
