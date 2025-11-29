@@ -3,6 +3,7 @@
 - [x] Add tests
 - [ ] Fix concurrency issues in memory
   - [ ] Protect shared maps
+- [ ] Check getting the next ID for lists and tasks
 - [ ] Check if singleton is needed
 - [ ] Add code checks, like lint, vet...
   - [x] Added lint in Makefile
