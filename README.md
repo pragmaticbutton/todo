@@ -1,35 +1,48 @@
 # TODO (learning project)
 
-This is a small in-memory TODO application created for learning and experimentation with Go.
+This repository contains a small TODO learning project in Go. It does not expose an HTTP/CLI interface yet; the `main.go` file simply wires services together so you can explore the domain logic.
 
-Purpose
+## Current state
 
-- Practice Go project layout, interfaces and dependency injection.
-- Explore simple in-memory storage, services and basic domain modeling.
+- In-memory storage backed by maps with `sync.RWMutex` guards to prevent data races.
+- Domain types for tasks and lists, plus a service layer that supports creating, listing, updating, deleting, and completing tasks and lists.
+- Monotonic ID generators in storage to avoid collisions even when records are removed.
+- Utility helpers for optional values and simple calculations (e.g., percentage complete).
+- No persistence layer, API, or dedicated CLI — everything runs in-process for now.
 
-Features
+## Purpose (learning focus)
 
-- Add, list, get, update and delete tasks and lists.
-- In-memory storage implementation (no external DB).
-- Simple service layer and domain types.
+- Practice Go project layout, interfaces, and dependency injection.
+- Explore simple storage abstractions and a service layer without external dependencies.
+- Provide a sandbox to iterate on ideas like validation, error handling, logging, and alternative storage backends.
 
-Project layout (top-level)
+## Project layout (top-level)
 
-- `main.go` — example usage / entry point
-- `internal/domain` — domain types for tasks and lists
-- `internal/service` — business logic / service layer
-- `internal/storage` — storage interface and implementations (memory)
-- `internal/utils` — small helpers
+- `main.go` — example usage / entry point for manual experimentation.
+- `internal/domain` — domain types for tasks and lists.
+- `internal/service` — business logic / service layer.
+- `internal/storage` — storage interface and implementations (currently memory-only).
+- `internal/utils` — small helpers (pointers, time helpers, etc.).
 
-Run
+## Run locally
 
 - Build and run with the provided Makefile:
 
+  ```bash
   make run
+  ```
 
-- A VS Code launch task (`.vscode/launch.json`) is included that runs the `make run` task.
+- Or run directly:
 
-Notes
+  ```bash
+  go run main.go
+  ```
 
-- This repository is intended for learning and experimentation only; it is not production-ready.
-- Concurrency and persistence are intentionally simple; consider adding synchronization or a real database for production use.
+## Development helpers
+
+- Lint: `make lint` (uses `golangci-lint`).
+- Tests: `make test` (runs `go test -v -race -cover ./...`).
+
+## Status and next steps
+
+This is intentionally **not** production-ready. See `TODOs.md` for the roadmap (adding APIs/CLI, better error handling, alternative storage backends, etc.). The project exists for learning purposes as new Go concepts are explored.
