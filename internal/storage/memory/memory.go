@@ -11,18 +11,30 @@ type memory struct {
 	mu    sync.RWMutex
 	tasks map[uint32]*task.Task
 	lists map[uint32]*list.List
+	// nextTaskID/nextListID are monotonic counters to avoid collisions even after deletions.
+	nextTaskID uint32
+	nextListID uint32
 }
 
 func New() *memory {
 	return &memory{
-		tasks: make(map[uint32]*task.Task),
-		lists: make(map[uint32]*list.List),
+		tasks:      make(map[uint32]*task.Task),
+		lists:      make(map[uint32]*list.List),
+		nextTaskID: 1,
+		nextListID: 1,
 	}
 }
 
 func (m *memory) AddTask(t *task.Task) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+
+	if t.ID == 0 {
+		t.ID = m.nextTaskID
+		m.nextTaskID++
+	} else if t.ID >= m.nextTaskID {
+		m.nextTaskID = t.ID + 1
+	}
 
 	if _, ok := m.tasks[t.ID]; ok {
 		return fmt.Errorf("task with id %d already exists", t.ID)
@@ -77,10 +89,11 @@ func (m *memory) UpdateTask(t *task.Task) error {
 }
 
 func (m *memory) NextTaskID() uint32 {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-
-	return uint32(len(m.tasks) + 1)
+	m.mu.Lock()
+	id := m.nextTaskID
+	m.nextTaskID++
+	m.mu.Unlock()
+	return id
 }
 
 func (m *memory) SearchTasks(listID *uint32) ([]task.Task, error) {
@@ -101,6 +114,13 @@ func (m *memory) SearchTasks(listID *uint32) ([]task.Task, error) {
 func (m *memory) AddList(l *list.List) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+
+	if l.ID == 0 {
+		l.ID = m.nextListID
+		m.nextListID++
+	} else if l.ID >= m.nextListID {
+		m.nextListID = l.ID + 1
+	}
 
 	if _, ok := m.lists[l.ID]; ok {
 		return fmt.Errorf("list with id %d already exists", l.ID)
@@ -155,8 +175,9 @@ func (m *memory) UpdateList(l *list.List) error {
 }
 
 func (m *memory) NextListID() uint32 {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-
-	return uint32(len(m.lists) + 1)
+	m.mu.Lock()
+	id := m.nextListID
+	m.nextListID++
+	m.mu.Unlock()
+	return id
 }
