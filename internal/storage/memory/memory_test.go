@@ -235,7 +235,7 @@ func TestNextTaskID(t *testing.T) {
 		require.NoError(t, mem.DeleteTask(2))
 
 		nextID := mem.NextTaskID()
-		assert.Equal(t, uint32(3), nextID) // still 3, since we had 3 tasks added
+		assert.Equal(t, uint32(4), nextID) // monotonic even after deletions
 	})
 }
 
@@ -412,6 +412,6 @@ func TestNextListID(t *testing.T) {
 		require.NoError(t, mem.DeleteList(2))
 
 		nextID := mem.NextListID()
-		assert.Equal(t, uint32(3), nextID) // still 3, since we had 3 lists added
+		assert.Equal(t, uint32(4), nextID) // monotonic even after deletions
 	})
 }
