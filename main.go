@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	// NOTE: The logic in main is only for testing purposes.
 	storage := memory.New()
 	listSvc := service.NewListService(storage, storage)
 	err := listSvc.AddList(service.AddListInput{Description: "shopping"})
