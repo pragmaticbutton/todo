@@ -22,7 +22,6 @@ func TestAddTask(t *testing.T) {
 	fixed := time.Date(2025, 10, 5, 0, 0, 0, 0, time.UTC)
 
 	t.Run("success, single", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 
 		in := task.Task{ID: 1, Description: "one", Priority: task.PriorityLow, Created: fixed}
@@ -38,7 +37,6 @@ func TestAddTask(t *testing.T) {
 	})
 
 	t.Run("success, multiple", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 
 		inputs := []task.Task{
@@ -64,7 +62,6 @@ func TestAddTask(t *testing.T) {
 	})
 
 	t.Run("duplicate id error", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 
 		first := task.Task{ID: 1, Description: "orig", Priority: task.PriorityLow, Created: fixed}
@@ -88,7 +85,6 @@ func TestAddTask(t *testing.T) {
 func TestGetTask(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		task := task.Task{ID: 1, Description: "one", Priority: task.PriorityLow, Created: time.Now()}
 		require.NoError(t, mem.AddTask(&task))
@@ -99,7 +95,6 @@ func TestGetTask(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		_, err := mem.GetTask(666)
 		require.Error(t, err)
@@ -108,7 +103,6 @@ func TestGetTask(t *testing.T) {
 
 func TestDeleteTask(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		task := task.Task{ID: 1, Description: "one", Priority: task.PriorityLow, Created: time.Now()}
 		require.NoError(t, mem.AddTask(&task))
@@ -125,7 +119,6 @@ func TestDeleteTask(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		err := mem.DeleteTask(666)
 		require.Error(t, err)
@@ -134,7 +127,6 @@ func TestDeleteTask(t *testing.T) {
 
 func TestListTasks(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		list, err := mem.ListTasks()
 		require.NoError(t, err)
@@ -142,7 +134,6 @@ func TestListTasks(t *testing.T) {
 	})
 
 	t.Run("multiple", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		tasks := []task.Task{
 			{ID: 1, Description: "one", Priority: task.PriorityLow, Created: time.Now()},
@@ -162,7 +153,6 @@ func TestListTasks(t *testing.T) {
 
 func TestUpdateTask(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		orig := task.Task{ID: 1, Description: "one", Priority: task.PriorityLow, Created: time.Now()}
 		updated := task.Task{ID: 1, Description: "updated", Priority: task.PriorityHigh, Created: orig.Created}
@@ -178,7 +168,6 @@ func TestUpdateTask(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		nonexistent := task.Task{ID: 666, Description: "nope", Priority: task.PriorityLow, Created: time.Now()}
 
@@ -189,7 +178,6 @@ func TestUpdateTask(t *testing.T) {
 
 func TestSearchTasks(t *testing.T) {
 	t.Run("success, found", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 
 		// create list
@@ -208,7 +196,6 @@ func TestSearchTasks(t *testing.T) {
 	})
 
 	t.Run("success, not found", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 
 		// create list
@@ -230,7 +217,6 @@ func TestSearchTasks(t *testing.T) {
 
 func TestNextTaskID(t *testing.T) {
 	t.Run("sequential", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		for i := 1; i <= 5; i++ {
 			nextID := mem.NextTaskID()
@@ -241,7 +227,6 @@ func TestNextTaskID(t *testing.T) {
 	})
 
 	t.Run("after deletion", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		for i := 1; i <= 3; i++ {
 			task := task.Task{ID: uint32(i), Description: "task", Priority: task.PriorityLow, Created: time.Now()}
@@ -256,7 +241,6 @@ func TestNextTaskID(t *testing.T) {
 
 func TestAddList(t *testing.T) {
 	t.Run("success, single", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 
 		in := list.List{ID: 1, Description: "my list", Created: time.Now()}
@@ -272,7 +256,6 @@ func TestAddList(t *testing.T) {
 	})
 
 	t.Run("success, multiple", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 
 		inputs := []list.List{
@@ -298,7 +281,6 @@ func TestAddList(t *testing.T) {
 	})
 
 	t.Run("duplicate id error", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 
 		first := list.List{ID: 1, Description: "orig", Created: time.Now()}
@@ -321,7 +303,6 @@ func TestAddList(t *testing.T) {
 
 func TestListLists(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		list, err := mem.ListLists()
 		require.NoError(t, err)
@@ -329,7 +310,6 @@ func TestListLists(t *testing.T) {
 	})
 
 	t.Run("multiple", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		lists := []list.List{
 			{ID: 1, Description: "list one", Created: time.Now()},
@@ -349,7 +329,6 @@ func TestListLists(t *testing.T) {
 
 func TestGetList(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		lst := list.List{ID: 1, Description: "my list", Created: time.Now()}
 		require.NoError(t, mem.AddList(&lst))
@@ -360,7 +339,6 @@ func TestGetList(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		_, err := mem.GetList(666)
 		require.Error(t, err)
@@ -369,7 +347,6 @@ func TestGetList(t *testing.T) {
 
 func TestDeleteList(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		lst := list.List{ID: 1, Description: "my list", Created: time.Now()}
 		require.NoError(t, mem.AddList(&lst))
@@ -385,7 +362,6 @@ func TestDeleteList(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		err := mem.DeleteList(666)
 		require.Error(t, err)
@@ -394,7 +370,6 @@ func TestDeleteList(t *testing.T) {
 
 func TestUpdateList(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		orig := list.List{ID: 1, Description: "my list", Created: time.Now()}
 		updated := list.List{ID: 1, Description: "updated list", Created: orig.Created}
@@ -409,7 +384,6 @@ func TestUpdateList(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		nonexistent := list.List{ID: 666, Description: "nope", Created: time.Now()}
 
@@ -420,7 +394,6 @@ func TestUpdateList(t *testing.T) {
 
 func TestNextListID(t *testing.T) {
 	t.Run("sequential", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		for i := 1; i <= 5; i++ {
 			nextID := mem.NextListID()
@@ -431,7 +404,6 @@ func TestNextListID(t *testing.T) {
 	})
 
 	t.Run("after deletion", func(t *testing.T) {
-		resetForTest()
 		mem := New()
 		for i := 1; i <= 3; i++ {
 			lst := list.List{ID: uint32(i), Description: "list", Created: time.Now()}
