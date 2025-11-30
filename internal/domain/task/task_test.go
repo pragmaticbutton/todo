@@ -2,7 +2,8 @@ package task
 
 import (
 	"testing"
-	"todo/internal/utils"
+
+	"github.com/pragmaticbutton/todo/internal/utils"
 
 	"github.com/stretchr/testify/assert"
 )

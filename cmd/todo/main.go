@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"todo/internal/domain/task"
-	"todo/internal/service"
-	"todo/internal/storage/memory"
-	"todo/internal/utils"
+
+	"github.com/pragmaticbutton/todo/internal/domain/task"
+	"github.com/pragmaticbutton/todo/internal/service"
+	"github.com/pragmaticbutton/todo/internal/storage/memory"
+	"github.com/pragmaticbutton/todo/internal/utils"
 )
 
 func main() {

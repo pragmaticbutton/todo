@@ -7,17 +7,17 @@
 - [x] Check if singleton is needed
 - [ ] Add code checks, like lint, vet...
   - [x] Added lint in Makefile
-- [ ] Add CI checks
+- [x] Add CI checks
   - [x] Added quality checks workflow
 - [ ] Error handling
 - [ ] Logging
-- [ ] What int types to use for ids and other fields?
+- [x] What int types to use for ids and other fields?
 - [ ] Sorting, pagination
 - [ ] Enable dependabot
 - [ ] Add codeowners
 - [x] Check how to handle optional fields/values
 - [ ] Expose service using rest/gprc... API
-- [ ] Check project structure
+- [x] Check project structure
 - [ ] Where to validate input parameters and where to define rules for input parameters?
 - [ ] Where to define output parameters?
 - [ ] Add possibility to use this as CLI tool
