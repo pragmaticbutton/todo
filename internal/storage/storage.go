@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"todo/internal/domain/list"
-	"todo/internal/domain/task"
+	"github.com/pragmaticbutton/todo/internal/domain/list"
+	"github.com/pragmaticbutton/todo/internal/domain/task"
 )
 
 type TaskStorage interface {

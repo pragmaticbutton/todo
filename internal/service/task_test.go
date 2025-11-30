@@ -3,9 +3,10 @@ package service
 import (
 	"errors"
 	"testing"
-	"todo/internal/domain/list"
-	"todo/internal/domain/task"
-	"todo/internal/utils"
+
+	"github.com/pragmaticbutton/todo/internal/domain/list"
+	"github.com/pragmaticbutton/todo/internal/domain/task"
+	"github.com/pragmaticbutton/todo/internal/utils"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

@@ -3,8 +3,9 @@ package memory
 import (
 	"testing"
 	"time"
-	"todo/internal/domain/list"
-	"todo/internal/domain/task"
+
+	"github.com/pragmaticbutton/todo/internal/domain/list"
+	"github.com/pragmaticbutton/todo/internal/domain/task"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

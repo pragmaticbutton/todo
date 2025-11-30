@@ -1,4 +1,4 @@
-module todo
+module github.com/pragmaticbutton/todo
 
 go 1.25.1
 

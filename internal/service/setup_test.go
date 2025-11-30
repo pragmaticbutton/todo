@@ -2,9 +2,10 @@ package service
 
 import (
 	"time"
-	"todo/internal/domain/list"
-	"todo/internal/domain/task"
-	"todo/internal/storage"
+
+	"github.com/pragmaticbutton/todo/internal/domain/list"
+	"github.com/pragmaticbutton/todo/internal/domain/task"
+	"github.com/pragmaticbutton/todo/internal/storage"
 
 	"github.com/stretchr/testify/mock"
 )

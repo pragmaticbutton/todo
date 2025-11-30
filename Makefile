@@ -1,5 +1,5 @@
 run:
-	@go run main.go
+	@go run ./cmd/todo
 
 lint:
 	@golangci-lint run ./...

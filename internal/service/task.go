@@ -2,9 +2,10 @@ package service
 
 import (
 	"time"
-	"todo/internal/domain/task"
-	"todo/internal/storage"
-	"todo/internal/utils"
+
+	"github.com/pragmaticbutton/todo/internal/domain/task"
+	"github.com/pragmaticbutton/todo/internal/storage"
+	"github.com/pragmaticbutton/todo/internal/utils"
 )
 
 type TaskService struct {
