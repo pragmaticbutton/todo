@@ -20,7 +20,8 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
-          version: v2.4
+          version: v2.4.0
+          args: --config .github/linters/.golangci.yaml ./...
 
   test:
     name: test
