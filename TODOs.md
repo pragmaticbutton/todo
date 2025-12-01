@@ -20,7 +20,13 @@
 - [x] Check project structure
 - [ ] Where to validate input parameters and where to define rules for input parameters?
 - [ ] Where to define output parameters?
-- [ ] Add possibility to use this as CLI tool
+- [ ] CLI tool
+  - [ ] autocompletion
+  - [ ] repl application
+  - [ ] proper printing formatter
+  - [ ] argument validation
+  - [ ] proper error reporting
+  - [ ] multiple arguments
 - [ ] Explore and add other storage options like database, redis, file...
 - [ ] Consider creating a frontend application that uses this
 - [ ] Documentation
