@@ -2,6 +2,7 @@ package task
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/pragmaticbutton/todo/internal/service"
 	"github.com/spf13/cobra"
@@ -17,6 +18,7 @@ func NewListCmd(taskService *service.TaskService) *cobra.Command {
 				return err
 			}
 			out := cmd.OutOrStdout()
+			sort.Slice(ts, func(i, j int) bool { return ts[i].ID < ts[j].ID })
 
 			fmt.Fprintln(out, "    ID  Description")
 			fmt.Fprintln(out, "    --  -----------")
