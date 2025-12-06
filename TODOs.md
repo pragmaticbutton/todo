@@ -27,6 +27,7 @@
   - [ ] argument validation
   - [ ] proper error reporting
   - [ ] multiple arguments
+  - [ ] add tests for commands
 - [ ] Explore and add other storage options like database, redis, file...
 - [ ] Consider creating a frontend application that uses this
 - [ ] Documentation

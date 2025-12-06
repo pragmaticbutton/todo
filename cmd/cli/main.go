@@ -11,8 +11,9 @@ import (
 func main() {
 	storage := memory.New()
 	taskService := service.NewTaskService(storage, storage)
+	listService := service.NewListService(storage, storage)
 
-	rootCmd := cli.NewRootCmd(taskService)
+	rootCmd := cli.NewRootCmd(taskService, listService)
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}
