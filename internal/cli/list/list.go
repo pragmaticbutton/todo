@@ -2,6 +2,7 @@ package list
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/pragmaticbutton/todo/internal/service"
 	"github.com/spf13/cobra"
@@ -34,6 +35,7 @@ func NewListListsCmd(listService *service.ListService) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			sort.Slice(ls, func(i, j int) bool { return ls[i].ID < ls[j].ID })
 			out := cmd.OutOrStdout()
 
 			fmt.Fprintln(out, "ID   Name        Description")

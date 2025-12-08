@@ -9,3 +9,6 @@ lint:
 
 test:
 	@go test -v -race -cover ./...
+
+golden:
+	go test -v -race -cover ./internal/cli/... -- -update
