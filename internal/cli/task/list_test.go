@@ -41,6 +41,7 @@ func TestListCmd_Golden(t *testing.T) {
 
 			var buf bytes.Buffer
 			cmd.SetOut(&buf)
+			cmd.SetArgs([]string{})
 
 			if err := cmd.Execute(); err != nil {
 				t.Fatalf("execute list: %v", err)

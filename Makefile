@@ -11,4 +11,4 @@ test:
 	@go test -v -race -cover ./...
 
 golden:
-	go test -v -race -cover ./internal/cli/... -- -update
+	go test -v -race -cover ./internal/cli/... -args -update
