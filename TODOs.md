@@ -26,8 +26,8 @@
   - [ ] proper printing formatter
   - [ ] argument validation
   - [ ] proper error reporting
-  - [ ] multiple arguments
-  - [ ] add tests for commands
+  - [ ] multiple arguments vs flags
+  - [x] add tests for commands
 - [ ] Explore and add other storage options like database, redis, file...
 - [ ] Consider creating a frontend application that uses this
 - [ ] Documentation
