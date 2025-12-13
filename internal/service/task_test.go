@@ -22,7 +22,7 @@ func TestAddTask(t *testing.T) {
 
 		result, err := svc.AddTask(AddTaskInput{
 			Description: "cookies",
-			Priority:    task.PriorityMedium,
+			Priority:    utils.Ptr(task.PriorityMedium),
 		})
 
 		assert.NoError(t, err)
@@ -41,7 +41,7 @@ func TestAddTask(t *testing.T) {
 
 		result, err := svc.AddTask(AddTaskInput{
 			Description: "cookies",
-			Priority:    task.PriorityHigh,
+			Priority:    utils.Ptr(task.PriorityHigh),
 			ListID:      utils.Ptr(uint32(1)),
 		})
 
@@ -58,7 +58,7 @@ func TestAddTask(t *testing.T) {
 
 		result, err := svc.AddTask(AddTaskInput{
 			Description: "cookies",
-			Priority:    task.PriorityMedium,
+			Priority:    utils.Ptr(task.PriorityMedium),
 			ListID:      utils.Ptr(uint32(999)),
 		})
 
@@ -76,7 +76,7 @@ func TestAddTask(t *testing.T) {
 
 		result, err := svc.AddTask(AddTaskInput{
 			Description: "cookies",
-			Priority:    task.PriorityMedium,
+			Priority:    utils.Ptr(task.PriorityMedium),
 			ListID:      utils.Ptr(uint32(1)),
 		})
 

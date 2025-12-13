@@ -23,7 +23,7 @@ func main() {
 	// }
 
 	taskSvc := service.NewTaskService(storage, storage)
-	_, err = taskSvc.AddTask(service.AddTaskInput{Description: "cookies", ListID: utils.Ptr(uint32(1)), Priority: task.PriorityMedium})
+	_, err = taskSvc.AddTask(service.AddTaskInput{Description: "cookies", ListID: utils.Ptr(uint32(1)), Priority: utils.Ptr(task.PriorityMedium)})
 	if err != nil {
 		panic(err)
 	}
@@ -31,7 +31,7 @@ func main() {
 	// for _, t := range tasks {
 	// 	fmt.Println(t)
 	// }
-	_, err = taskSvc.AddTask(service.AddTaskInput{Description: "nesto", ListID: utils.Ptr(uint32(1)), Priority: task.PriorityHigh})
+	_, err = taskSvc.AddTask(service.AddTaskInput{Description: "nesto", ListID: utils.Ptr(uint32(1)), Priority: utils.Ptr(task.PriorityHigh)})
 	if err != nil {
 		panic(err)
 	}
