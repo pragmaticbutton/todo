@@ -8,11 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	flagPriority = "priority"
-	flagListID   = "list-id"
-)
-
 func NewAddCmd(taskService *service.TaskService) *cobra.Command {
 	var (
 		priorityStr string
