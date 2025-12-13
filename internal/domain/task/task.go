@@ -1,6 +1,9 @@
 package task
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Priority int
 
@@ -28,5 +31,18 @@ func New(id uint32, desc string, pr Priority, lID *uint32) *Task {
 		Priority:    pr,
 		ListID:      lID,
 		Created:     time.Now(),
+	}
+}
+
+func ParsePriority(s string) (Priority, error) {
+	switch s {
+	case "low":
+		return PriorityLow, nil
+	case "medium":
+		return PriorityMedium, nil
+	case "high":
+		return PriorityHigh, nil
+	default:
+		return PriorityUnknown, fmt.Errorf("invalid priority: %s", s)
 	}
 }

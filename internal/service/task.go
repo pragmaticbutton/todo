@@ -15,7 +15,7 @@ type TaskService struct {
 
 type AddTaskInput struct {
 	Description string
-	Priority    task.Priority
+	Priority    *task.Priority
 	ListID      *uint32
 }
 
@@ -40,7 +40,13 @@ func (s *TaskService) AddTask(input AddTaskInput) (*task.Task, error) {
 		}
 	}
 
-	t := task.New(s.taskStorage.NextTaskID(), input.Description, input.Priority, input.ListID)
+	// Use provided priority or default to PriorityMedium
+	priority := task.PriorityMedium
+	if input.Priority != nil {
+		priority = *input.Priority
+	}
+
+	t := task.New(s.taskStorage.NextTaskID(), input.Description, priority, input.ListID)
 	err := s.taskStorage.AddTask(t)
 	if err != nil {
 		return nil, err
