@@ -1,48 +1,46 @@
 # TODO (learning project)
 
-This repository contains a small TODO learning project in Go. It does not expose an HTTP/CLI interface yet; the `main.go` file simply wires services together so you can explore the domain logic.
+A Go project for learning and experimenting with clean architecture, dependency injection, and CLI patterns. This is my sandbox for exploring Go concepts — not meant for production.
 
-## Current state
+## What's in here?
 
-- In-memory storage backed by maps with `sync.RWMutex` guards to prevent data races.
-- Domain types for tasks and lists, plus a service layer that supports creating, listing, updating, deleting, and completing tasks and lists.
-- Monotonic ID generators in storage to avoid collisions even when records are removed.
-- Utility helpers for optional values and simple calculations (e.g., percentage complete).
-- No persistence layer, API, or dedicated CLI — everything runs in-process for now.
+- **Clean architecture** with domain, service, and storage layers.
+- **CLI tool** built with Cobra for managing tasks and lists.
+- **In-memory storage** with thread-safe maps (`sync.RWMutex`).
+- **Service layer** handling business logic (create, update, delete, complete tasks/lists).
+- **Comprehensive tests** with golden file testing and race detection.
 
-## Purpose (learning focus)
+## Quick start
 
-- Practice Go project layout, interfaces, and dependency injection.
-- Explore simple storage abstractions and a service layer without external dependencies.
-- Provide a sandbox to iterate on ideas like validation, error handling, logging, and alternative storage backends.
+Run the CLI:
 
-## Project layout (top-level)
+```bash
+make run
+```
 
-- `main.go` — example usage / entry point for manual experimentation.
-- `internal/domain` — domain types for tasks and lists.
-- `internal/service` — business logic / service layer.
-- `internal/storage` — storage interface and implementations (currently memory-only).
-- `internal/utils` — small helpers (pointers, time helpers, etc.).
+Run tests:
 
-## Run locally
+```bash
+make test
+```
 
-- Build and run with the provided Makefile:
+Build the CLI binary:
 
-  ```bash
-  make run
-  ```
+```bash
+make build-cli
+```
 
-- Or run directly:
+## Project layout
 
-  ```bash
-  go run main.go
-  ```
+- `cmd/cli/` — CLI entry point
+- `cmd/todo/` — experimental sandbox entry point
+- `internal/cli/` — CLI command implementations with golden tests
+- `internal/domain/` — task and list domain types
+- `internal/service/` — business logic layer
+- `internal/storage/` — storage abstraction and memory implementation
+- `internal/utils/` — utility helpers
 
-## Development helpers
+## For curious developers
 
-- Lint: `make lint` (uses `golangci-lint`).
-- Tests: `make test` (runs `go test -v -race -cover ./...`).
-
-## Status and next steps
-
-This is intentionally **not** production-ready. See `TODOs.md` for the roadmap (adding APIs/CLI, better error handling, alternative storage backends, etc.). The project exists for learning purposes as new Go concepts are explored.
+See `TODOs.md` for ideas I'm playing with (alternative storage backends, better error handling, logging, etc.).
+Run `make lint` to check code quality.
