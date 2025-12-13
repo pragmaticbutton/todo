@@ -7,6 +7,7 @@ import (
 
 	taskcmd "github.com/pragmaticbutton/todo/internal/cli/task"
 	"github.com/pragmaticbutton/todo/internal/domain/task"
+	"github.com/pragmaticbutton/todo/internal/service"
 )
 
 func TestDeleteCmd_Golden(t *testing.T) {
@@ -50,31 +51,99 @@ func TestDeleteCmd_Golden(t *testing.T) {
 	}
 }
 
-func TestDeleteCmd_Unit(t *testing.T) {
+func TestDeleteCmd_Integration(t *testing.T) {
 	t.Parallel()
 
-	svc := newTaskServiceWithTasks(t, task.Task{ID: 1, Description: "A"})
-	cmd := taskcmd.NewDeleteCmd(svc)
-	cmd.SetArgs([]string{"1"})
-
-	if err := cmd.Execute(); err != nil {
-		t.Fatalf("execute delete: %v", err)
+	tests := []struct {
+		name    string
+		tasks   []task.Task
+		args    []string
+		checkFn func(t *testing.T, svc *service.TaskService)
+	}{
+		{
+			name:  "delete single task",
+			tasks: []task.Task{{ID: 1, Description: "A"}},
+			args:  []string{"1"},
+			checkFn: func(t *testing.T, svc *service.TaskService) {
+				if _, err := svc.GetTask(1); err == nil {
+					t.Fatalf("expected task to be deleted")
+				}
+			},
+		},
+		{
+			name: "delete one task leaves others",
+			tasks: []task.Task{
+				{ID: 1, Description: "First"},
+				{ID: 2, Description: "Second"},
+			},
+			args: []string{"2"},
+			checkFn: func(t *testing.T, svc *service.TaskService) {
+				if _, err := svc.GetTask(2); err == nil {
+					t.Fatalf("expected deleted task to be missing")
+				}
+				remaining, err := svc.GetTask(1)
+				if err != nil {
+					t.Fatalf("expected other task to remain: %v", err)
+				}
+				if remaining.Description != "First" {
+					t.Fatalf("unexpected remaining task: %+v", remaining)
+				}
+			},
+		},
 	}
 
-	_, err := svc.GetTask(1)
-	if err == nil {
-		t.Fatalf("expected task to be deleted")
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			svc := newTaskServiceWithTasks(t, tt.tasks...)
+			cmd := taskcmd.NewDeleteCmd(svc)
+			cmd.SetArgs(tt.args)
+
+			if err := cmd.Execute(); err != nil {
+				t.Fatalf("execute delete: %v", err)
+			}
+
+			tt.checkFn(t, svc)
+		})
 	}
 }
 
-func TestDeleteCmd_InvalidID(t *testing.T) {
+func TestDeleteCmd_Errors(t *testing.T) {
 	t.Parallel()
 
-	svc := newTaskServiceWithTasks(t)
-	cmd := taskcmd.NewDeleteCmd(svc)
-	cmd.SetArgs([]string{"abc"})
+	tests := []struct {
+		name  string
+		tasks []task.Task
+		args  []string
+	}{
+		{
+			name: "invalid id",
+			args: []string{"abc"},
+		},
+		{
+			name: "missing task",
+			args: []string{"2"},
+		},
+		{
+			name: "missing argument",
+			args: []string{},
+		},
+	}
 
-	if err := cmd.Execute(); err == nil {
-		t.Fatalf("expected error for invalid id")
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			svc := newTaskServiceWithTasks(t, tt.tasks...)
+			cmd := taskcmd.NewDeleteCmd(svc)
+			cmd.SetArgs(tt.args)
+
+			if err := cmd.Execute(); err == nil {
+				t.Fatalf("expected error for case %q", tt.name)
+			}
+		})
 	}
 }
