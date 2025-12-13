@@ -17,7 +17,7 @@ func TestUpdateCmd_Golden(t *testing.T) {
 
 	var buf bytes.Buffer
 	cmd.SetOut(&buf)
-	cmd.SetArgs([]string{"1", "New", "New desc"})
+	cmd.SetArgs([]string{"1", "--name", "New", "--description", "New desc"})
 
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("execute update: %v", err)
@@ -32,7 +32,7 @@ func TestUpdateCmd_Unit(t *testing.T) {
 
 	svc := newListServiceWithLists(t, list.List{ID: 1, Name: "Old", Description: "Old desc"})
 	cmd := listcmd.NewUpdateCmd(svc)
-	cmd.SetArgs([]string{"1", "New", "New desc"})
+	cmd.SetArgs([]string{"1", "--name", "New", "--description", "New desc"})
 
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("execute update: %v", err)
@@ -47,6 +47,66 @@ func TestUpdateCmd_Unit(t *testing.T) {
 	}
 }
 
+func TestUpdateCmd_Integration(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		list    list.List
+		args    []string
+		checkFn func(t *testing.T, lst *list.List)
+	}{
+		{
+			name: "update name",
+			list: list.List{ID: 1, Name: "Old", Description: "Keep"},
+			args: []string{"1", "--name", "New"},
+			checkFn: func(t *testing.T, lst *list.List) {
+				if lst.Name != "New" {
+					t.Fatalf("expected name to be updated, got %s", lst.Name)
+				}
+				if lst.Description != "Keep" {
+					t.Fatalf("expected description to remain, got %s", lst.Description)
+				}
+			},
+		},
+		{
+			name: "update description",
+			list: list.List{ID: 1, Name: "Old", Description: "Old desc"},
+			args: []string{"1", "--description", "New desc"},
+			checkFn: func(t *testing.T, lst *list.List) {
+				if lst.Description != "New desc" {
+					t.Fatalf("expected description to be updated, got %s", lst.Description)
+				}
+				if lst.Name != "Old" {
+					t.Fatalf("expected name to remain, got %s", lst.Name)
+				}
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tc := tt
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			svc := newListServiceWithLists(t, tc.list)
+			cmd := listcmd.NewUpdateCmd(svc)
+			cmd.SetArgs(tc.args)
+
+			if err := cmd.Execute(); err != nil {
+				t.Fatalf("execute update: %v", err)
+			}
+
+			updated, err := svc.GetList(1)
+			if err != nil {
+				t.Fatalf("get list: %v", err)
+			}
+
+			tc.checkFn(t, updated)
+		})
+	}
+}
+
 func TestUpdateCmd_Errors(t *testing.T) {
 	t.Parallel()
 
@@ -56,16 +116,19 @@ func TestUpdateCmd_Errors(t *testing.T) {
 	}{
 		{
 			name: "invalid id",
-			args: []string{"abc", "New", "New desc"},
+			args: []string{"abc", "--name", "New"},
 		},
 		{
 			name: "missing list",
-			args: []string{"2", "New", "New desc"},
+			args: []string{"2", "--name", "New"},
+		},
+		{
+			name: "no fields provided",
+			args: []string{"1"},
 		},
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 

@@ -7,8 +7,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const flagDescription = "description"
-
 func NewAddCmd(listService *service.ListService) *cobra.Command {
 	var description string
 
