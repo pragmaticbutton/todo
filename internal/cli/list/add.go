@@ -7,14 +7,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const flagDescription = "description"
+
 func NewAddCmd(listService *service.ListService) *cobra.Command {
+	var description string
+
 	cmd := &cobra.Command{
-		Use:   "add <name> <description>",
+		Use:   "add <name> [flags]",
 		Short: "Add a new list",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			name := args[0]
-			desc := args[1]
+			desc := ""
+			if cmd.Flags().Changed(flagDescription) {
+				desc = description
+			}
 
 			if err := listService.AddList(service.AddListInput{
 				Name:        name,
@@ -27,6 +34,14 @@ func NewAddCmd(listService *service.ListService) *cobra.Command {
 			return nil
 		},
 	}
+
+	cmd.Flags().StringVarP(
+		&description,
+		flagDescription,
+		"d",
+		"",
+		"Optional list description",
+	)
 
 	return cmd
 }
