@@ -14,7 +14,7 @@ func Run(rootCmd *cobra.Command) error {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Println("> ")
+		fmt.Print("> ")
 
 		// EOF (Ctrl+D)
 		if !scanner.Scan() {
