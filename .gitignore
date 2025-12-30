@@ -36,3 +36,5 @@ dist/
 
 .gocache/
 .cache/
+
+*.pdf
