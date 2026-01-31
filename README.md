@@ -39,8 +39,3 @@ make build-cli
 - `internal/service/` — business logic layer
 - `internal/storage/` — storage abstraction and memory implementation
 - `internal/utils/` — utility helpers
-
-## For curious developers
-
-See `TODOs.md` for ideas I'm playing with (alternative storage backends, better error handling, logging, etc.).
-Run `make lint` to check code quality.
